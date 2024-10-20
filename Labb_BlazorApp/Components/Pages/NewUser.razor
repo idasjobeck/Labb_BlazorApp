@@ -1,10 +1,63 @@
 ﻿@page "/newuser"
 @rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.HttpLogging
 
 <PageTitle>New User</PageTitle>
 
-<h3>New User</h3>
 
-@code {
+<h3>Register New User</h3>
+@if (displayForm)
+{
+    <p><i>Fields noted with <span class="text-danger"><b>*</b></span> are mandatory fields.</i></p>
 
+    <EditForm Model="@user" OnValidSubmit="AddUserToDb">
+        <DataAnnotationsValidator />
+        <label class="form-label"><b>Name</b></label><span class="text-danger"><b> *</b></span><br />
+        <div class="spacing-bottom">
+            <InputText class="testclass1" id="firstName" @bind-Value="user.FirstName" placeholder="First Name" /><br />
+            <ValidationMessage For="@(() => user.FirstName)" />
+        </div>
+        <div class="spacing-bottom">
+            <InputText id="lastName" @bind-Value="user.LastName" placeholder="Last Name" /><br />
+            <ValidationMessage For="@(() => user.LastName)" />
+        </div>
+        <label class="form-label"><b>Email</b></label><span class="text-danger"><b> *</b></span><br />
+        <div class="spacing-bottom">
+            <InputText id="email" @bind-Value="user.Email" placeholder="Email Address" /><br />
+            <ValidationMessage For="@(() => user.Email)" />
+        </div>
+        <label class="form-label"><b>Company</b></label><br />
+        <div class="spacing-bottom">
+            <InputText id="company" @bind-Value="user.Company.CompanyName" placeholder="Company Name" /><br />
+        </div>
+        <div class="spacing-bottom">
+            <InputText id="catchphrase" @bind-Value="user.Company.Catchphrase" placeholder="Company Catchphrase" /><br />
+        </div>
+        <label class="form-label"><b>Address</b></label><br />
+        <div class="spacing-bottom">
+            <InputText id="street" @bind-Value="user.Address.Street" placeholder="Street" /><br />
+        </div>
+        <div class="spacing-bottom">
+            <InputText id="city" @bind-Value="user.Address.City" placeholder="City" /><br />
+        </div>
+        <div class="spacing-bottom">
+            <InputText id="zipCode" @bind-Value="user.Address.ZipCode" placeholder="Zip code" /><br />
+        </div>
+        <br/>
+        <button type="submit" class="btn-primary">Submit</button>
+        <button type="reset">Reset</button>
+    </EditForm>
+}
+else
+{
+    <p>Thank you @user.FirstName, the form was submitted successfully!</p>
+    <p>
+        Your details entered are as follows:<br />
+        <b>Name:</b> @user.FirstName @user.LastName<br />
+        <b>Email:</b> @user.Email<br />
+        <b>Company name:</b> @user.Company.CompanyName<br />
+        <b>Company catchphrase:</b> @user.Company.Catchphrase<br />
+        <b>Address:</b> @user.Address.Street, @user.Address.City, @user.Address.ZipCode<br />
+    </p>
 }

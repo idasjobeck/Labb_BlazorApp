@@ -7,31 +7,35 @@ public partial class Users
     public class User
     {
         private int _userId;
-        private string _firstName;
-        private string _lastName;
-        private string _email;
-        private string _phoneNumber;
-        private string _website;
-        private AddressInfo _address;
-        private CompanyInfo _company;
-
+        
         public int UserId { get => _userId; }
 
-        [Required]
-        public string FirstName { get => _firstName; set => _firstName = value; }
+        public string FullName
+        {
+            get { return $"{FirstName} {LastName}"; }
+            set
+            {
+                var fullName = value.Split(' ');
+                FirstName = fullName[0];
+                LastName = fullName[1];
+            }
+        }
 
         [Required]
-        public string LastName { get => _lastName; set => _lastName = value; }
+        public string FirstName { get; set; }
 
         [Required]
-        public string Email { get => _email; set => _email = value; }
+        public string LastName { get; set; }
 
-        public string PhoneNumber { get => _phoneNumber; set => _phoneNumber = value; }
+        [Required]
+        public string Email { get; set; }
 
-        public string Website { get => _website; set => _website = value; }
+        public string PhoneNumber { get; set; }
 
-        public AddressInfo Address { get; set; }
-        public CompanyInfo Company { get; set; }
+        public string Website { get; set; }
+
+        public Address Address { get; set; }
+        public Company Company { get; set; }
 
         public User() //constructor with no parameters
         {
@@ -41,8 +45,8 @@ public partial class Users
             Email = string.Empty;
             PhoneNumber = string.Empty;
             Website = string.Empty;
-            Address = new AddressInfo();
-            Company = new CompanyInfo();
+            Address = new Address();
+            Company = new Company();
         }
 
         public User(int userId, string firstName, string lastName, string email)
@@ -52,8 +56,8 @@ public partial class Users
             LastName = lastName;
             Email = email;
             Website = string.Empty;
-            Address = new AddressInfo();
-            Company = new CompanyInfo();
+            Address = new Address();
+            Company = new Company();
         }
 
         public User(int userId, string firstName, string lastName, string email, string website, string street, string city, string zipcode, string companyName, string catchphrase)
@@ -63,29 +67,25 @@ public partial class Users
             LastName = lastName;
             Email = email;
             Website = string.Empty;
-            Address = new AddressInfo(street, city, zipcode);
-            Company = new CompanyInfo(companyName, catchphrase);
+            Address = new Address(street, city, zipcode);
+            Company = new Company(companyName, catchphrase);
         }
     }
 
-    public class AddressInfo
+    public class Address
     {
-        private string _street;
-        private string _city;
-        private string _zipCode;
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string ZipCode { get; set; }
 
-        public string Street { get => _street; set => _street = value; }
-        public string City { get => _city; set => _city = value; }
-        public string ZipCode { get => _zipCode; set => _zipCode = value; }
-
-        public AddressInfo()
+        public Address()
         {
             Street = string.Empty;
             City = string.Empty;
             ZipCode = string.Empty;
         }
 
-        public AddressInfo(string street, string city, string zipCode)
+        public Address(string street, string city, string zipCode)
         {
             Street = street;
             City = city;
@@ -94,20 +94,18 @@ public partial class Users
 
     }
 
-    public class CompanyInfo
+    public class Company
     {
-        private string _companyName;
-        private string _catchphrase;
-        public string CompanyName { get => _companyName; set => _companyName = value; }
-        public string Catchphrase { get => _catchphrase; set => _companyName = value; }
+        public string CompanyName { get; set; }
+        public string Catchphrase { get; set; }
 
-        public CompanyInfo()
+        public Company()
         {
             CompanyName = string.Empty;
             Catchphrase = string.Empty;
         }
 
-        public CompanyInfo(string companyName, string catchphrase)
+        public Company(string companyName, string catchphrase)
         {
             CompanyName = companyName;
             Catchphrase = catchphrase;

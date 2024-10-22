@@ -86,13 +86,16 @@ public class User
         }
     }
 
-    [Required]
+    [Required(ErrorMessage = "The first name field is required.")]
+    [StringLength(50, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 50 characters.")]
     public string FirstName { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "The last name field is required.")]
+    [StringLength(50, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 50 characters.")]
     public string LastName { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "The email field is required.")]
+    [RegularExpression(@"^[a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$", ErrorMessage = "The email entered must be in a valid format.")]
     public string Email { get; set; }
 
     public string PhoneNumber { get; set; }
@@ -163,8 +166,8 @@ public class Address
 
 public class Company
 {
-    public string CompanyName { get; set; }
-    public string Catchphrase { get; set; }
+    public string? CompanyName { get; set; }
+    public string? Catchphrase { get; set; }
 
     public Company()
     {

@@ -1,6 +1,7 @@
 ﻿@page "/newuser"
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
+@using System.Reflection.Metadata.Ecma335
 @using Microsoft.AspNetCore.HttpLogging
 
 <PageTitle>New User</PageTitle>
@@ -56,8 +57,8 @@ else
         Your details entered are as follows:<br />
         <b>Name:</b> @_user.FirstName @_user.LastName<br />
         <b>Email:</b> @_user.Email<br />
-        <b>Company name:</b> @_user.Company.CompanyName<br />
-        <b>Company catchphrase:</b> @_user.Company.Catchphrase<br />
-        <b>Address:</b> @_user.Address.Street, @_user.Address.City, @_user.Address.ZipCode<br />
+        <b>Company name:</b> @_user.Company.CompanyName.OrIfEmpty("N/A")<br />
+        <b>Company catchphrase:</b> @_user.Company.Catchphrase.OrIfEmpty("N/A")<br />
+        <b>Address:</b> @_user.Address.Street.OrIfEmpty("N/A"), @_user.Address.City.OrIfEmpty("N/A"), @_user.Address.ZipCode.OrIfEmpty("N/A")<br />
     </p>
 }

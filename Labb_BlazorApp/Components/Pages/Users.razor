@@ -1,7 +1,56 @@
 ﻿@page "/users"
 @rendermode InteractiveServer
+@attribute [StreamRendering]
 @using System.ComponentModel.DataAnnotations;
 
 <PageTitle>Users</PageTitle>
 
 <h3>Users</h3>
+
+@if (_users == null)
+{
+    <p><em>Loading...</em></p>
+    <img src="/resources/giphy_duck.gif" width="100" height="100"/>
+}
+else
+{
+    <button @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
+    <p></p>
+    <p>Showing @UsersToDisplay?.Count of @_users.Count users.</p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>User ID</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Email address</th>
+            <th>Phone number</th>
+            <th>Website</th>
+            <th>Street</th>
+            <th>City</th>
+            <th>Zip Code</th>
+            <th>Company name</th>
+            <th>Catchphrase</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in UsersToDisplay)
+        {
+            <tr>
+                <td>@user.UserId</td>
+                <td>@user.FirstName</td>
+                <td>@user.LastName</td>
+                <td>@user.Email</td>
+                <td>@user.PhoneNumber</td>
+                <td>@user.Website</td>
+                <td>@user.Address.Street</td>
+                <td>@user.Address.City</td>
+                <td>@user.Address.ZipCode</td>
+                <td>@user.Company.CompanyName</td>
+                <td>@user.Company.Catchphrase</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

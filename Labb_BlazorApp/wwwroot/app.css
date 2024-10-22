@@ -51,7 +51,8 @@ h1:focus {
 }
 
 .nav-scrollable {
-    background-image: linear-gradient(180deg, #2F2F2F 0%, #757575 90%) !important;
+    /*background-image: linear-gradient(180deg, #2F2F2F 0%, #757575 90%) !important;*/
+    background-color: #2F2F2F;
 }
 
 .top-row.ps-3.navbar.navbar-dark {
@@ -59,7 +60,7 @@ h1:focus {
 }
 
 .spacing-bottom {
-    padding-bottom: 35px !important;
+    padding-bottom: 5px !important;
 }
 
 .extra-spacing-bottom {

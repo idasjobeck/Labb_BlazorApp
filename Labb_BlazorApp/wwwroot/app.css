@@ -77,6 +77,11 @@ h1:focus {
     margin-left: 5px;
 }
 
+.button-padding {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
 .sortable {
     cursor: pointer;
 }

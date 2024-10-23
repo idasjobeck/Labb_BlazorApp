@@ -7,11 +7,6 @@
 
 <span><h3>Users</h3></span>
 
-<p>
-    
-</p>
-<p></p>
-
 @if (_users == null)
 {
     <p><em>Loading...</em></p>
@@ -20,16 +15,36 @@
 else
 {
     <div class="clearfix">
-        <label for="dataSource">Currently showing data from </label>
-        <select name="dataSource" id="dataSource" @onchange="DataSourceIsChanged">
-            <option value="api" selected>API</option>
-            <option value="memory">Memory</option>
-        </select>
-        <button class="float-end button-margin" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
-        <button class="float-end button-margin" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display10))">Show 10</button>
-        <button class="float-end button-margin" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display05))">Show 5</button>
+        <div class="float-end mb-5">
+            <label for="dataSource">Currently showing data from</label>
+            <select name="dataSource" id="dataSource" class="form-select-sm" @onchange=" DataSourceIsChanged">
+                <option value="api" selected>API</option>
+                <option value="memory">Memory</option>
+            </select>
+        </div>
     </div>
-    <p></p>
+
+    <div class="clearfix">
+        <div class="mb-3">
+            <label for="inputGroupSelect01">Select search criteria: </label>
+            <select class="form-select-sm" id="inputGroupSelect01" @onchange="SearchCriteriaIsChanged">
+                <option value="none" selected>Please select</option>
+                <option value="userId">User ID</option>
+                <option value="firstName">First name</option>
+                <option value="lastName">Last name</option>
+                <option value="email">Email address</option>
+                <option value="company">Company name</option>
+            </select>
+
+            <input type="text" placeholder="search term" aria-label="search term" aria-describedby="button-addon2" @bind=_searchTerm>
+            <button type="button" id="button-addon2" class="button-padding" disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
+
+            <button class="float-end button-margin button-padding" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
+            <button class="float-end button-margin button-padding" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display10))">Show 10</button>
+            <button class="float-end button-margin button-padding" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display05))">Show 5</button>
+        </div>
+
+    </div>
 
     <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
 
@@ -68,4 +83,6 @@ else
         }
         </tbody>
     </table>
+    <p></p>
+    <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
 }

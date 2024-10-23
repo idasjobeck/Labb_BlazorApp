@@ -34,6 +34,16 @@ public enum SortByAttribute
     Company
 }
 
+public enum SearchCriteria
+{
+    None,
+    UserId,
+    FirstName,
+    LastName,
+    Email,
+    Company
+}
+
 public partial class Users
 {
     private List<User>? _users;
@@ -41,9 +51,12 @@ public partial class Users
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
     public IUserService UserService = new UserService();
     private string _url = "https://jsonplaceholder.typicode.com/users";
-    public IDataProcessing DataProcessing = new DataProcessing();
+    public IUserDataProcessing DataProcessing = new DataProcessing();
     private SortOrder _sortOrder = SortOrder.Ascending;
     private SortByAttribute _sortBy = SortByAttribute.FirstName;
+    private SearchCriteria _searchCriteria = SearchCriteria.None;
+    private bool _searchDisabled = true;
+    private string _searchTerm;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -129,6 +142,46 @@ public partial class Users
         }
 
         UsersToDisplay = DataProcessing.Sort(UsersToDisplay, _sortBy, _sortOrder);
+    }
+
+    private void SearchCriteriaIsChanged(ChangeEventArgs args)
+    {
+        //clear search input box
+        _searchTerm = string.Empty;
+
+        switch (args.Value?.ToString()) //change to switch expression?
+        {
+            case "none":
+                _searchCriteria = SearchCriteria.None;
+                break;
+            case "userId":
+                _searchCriteria = SearchCriteria.UserId;
+                break;
+            case "firstName":
+                _searchCriteria = SearchCriteria.FirstName;
+                break;
+            case "lastName":
+                _searchCriteria = SearchCriteria.LastName;
+                break;
+            case "email":
+                _searchCriteria = SearchCriteria.Email;
+                break;
+            case "company":
+                _searchCriteria = SearchCriteria.Company;
+                break;
+            default:
+                break;
+        }
+
+        if (_searchCriteria == SearchCriteria.None)
+            _searchDisabled = true;
+        else
+            _searchDisabled = false;
+    }
+
+    private void SearchUsers() //(SearchCriteria searchCriteria, string searchTerm)
+    {
+        UsersToDisplay = DataProcessing.Search(UsersToDisplay, _searchCriteria, _searchTerm);
     }
 }
 
@@ -307,7 +360,7 @@ public interface IUserService
     public Task<IEnumerable<User>> GetUsers(string url);
 }
 
-public class DataProcessing : IDataProcessing
+public class DataProcessing : IUserDataProcessing
 {
     public List<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay)
     {
@@ -368,12 +421,45 @@ public class DataProcessing : IDataProcessing
 
         return users.ToList();
     }
+
+    public List<User> Search(IEnumerable<User> users, SearchCriteria searchCriteria, string searchTerm)
+    {
+        switch (searchCriteria)
+        {
+            case SearchCriteria.UserId:
+                users = users.Where(users =>
+                    users.UserId.ToString().Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
+                break;
+            case SearchCriteria.FirstName:
+                users = users.Where(users =>
+                    users.FirstName.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
+                break;
+            case SearchCriteria.LastName:
+                users = users.Where(users =>
+                    users.LastName.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
+                break;
+            case SearchCriteria.Email:
+                users = users.Where(users =>
+                    users.Email.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
+                break;
+            case SearchCriteria.Company:
+                users = users.Where(users =>
+                    users.Company.CompanyName.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
+                break;
+            case SearchCriteria.None:
+            default:
+                break;
+        }
+
+        return users.ToList();
+    }
 }
 
-public interface IDataProcessing
+public interface IUserDataProcessing
 {
     public List<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay);
     public List<User> Sort(IEnumerable<User> users, SortByAttribute sortBy, SortOrder sortOrder);
+    public List<User> Search(IEnumerable<User> users, SearchCriteria searchCriteria, string searchTerm);
 }
 
 public static class UserExtensions

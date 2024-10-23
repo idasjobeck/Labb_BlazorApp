@@ -24,7 +24,8 @@ public partial class Users
 {
     private List<User>? _users;
     public List<User>? UsersToDisplay { get; set; }
-    public UserService MyUserService = new UserService();
+    public IUserService UserService = new UserService();
+    public IDataProcessing DataProcessing = new DataProcessing();
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
     private string _url = "https://jsonplaceholder.typicode.com/users";
     private string _currentlyShowingDataFrom = "API";
@@ -35,7 +36,7 @@ public partial class Users
         {
             await Task.Delay(3500);
 
-            var usersFromApi = await MyUserService.GetUsers(_url);
+            var usersFromApi = await UserService.GetUsers(_url);
             _users = usersFromApi.ToList();
             SetUsersToDisplay();
 
@@ -72,7 +73,7 @@ public partial class Users
             _numberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
         }
 
-        UsersToDisplay = UsersToDisplay.Filter(_numberOfItemsToDisplay);
+        UsersToDisplay = DataProcessing.Filter(UsersToDisplay, _numberOfItemsToDisplay);
     }
 
     private async Task DataSourceIsChanged(ChangeEventArgs args)
@@ -83,12 +84,12 @@ public partial class Users
         {
             case "api":
                 //get users from API
-                var usersFromApi = await MyUserService.GetUsers(_url);
+                var usersFromApi = await UserService.GetUsers(_url);
                 _users = usersFromApi.ToList();
                 break;
             case "memory":
                 //get users from memory
-                _users = MyUserService.GetUsers().ToList();
+                _users = UserService.GetUsers().ToList();
                 break;
             default:
                 break;
@@ -266,15 +267,16 @@ public class UserService : IUserService
     }
 }
 
-public static class UserExtensions
+public interface IUserService
 {
-    public static bool IsNumberToDisplayGreaterThanUsersAvailable(this IEnumerable<User> users,
-        int numberOfItemsToDisplay)
-    {
-        return numberOfItemsToDisplay > users.Count();
-    }
+    public IEnumerable<User> GetUsers();
 
-    public static List<User> Filter(this IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay)
+    public Task<IEnumerable<User>> GetUsers(string url);
+}
+
+public class DataProcessing : IDataProcessing
+{
+    public List<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay)
     {
         switch (numberOfItemsToDisplay)
         {
@@ -293,9 +295,17 @@ public static class UserExtensions
     }
 }
 
-public interface IUserService
+public interface IDataProcessing
 {
-    public IEnumerable<User> GetUsers();
-
-    public Task<IEnumerable<User>> GetUsers(string url);
+    public List<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay);
 }
+
+public static class UserExtensions
+{
+    public static bool IsNumberToDisplayGreaterThanUsersAvailable(this IEnumerable<User> users,
+        int numberOfItemsToDisplay)
+    {
+        return numberOfItemsToDisplay > users.Count();
+    }
+}
+

@@ -5,7 +5,12 @@
 
 <PageTitle>Users</PageTitle>
 
-<h3>Users</h3>
+<span><h3>Users</h3></span>
+@* <p>Currently showing data from @(_currentlyShowingDataFrom).</p> *@
+<p>
+    
+</p>
+<p></p>
 
 @if (_users == null)
 {
@@ -14,9 +19,19 @@
 }
 else
 {
-    <button @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
+    <div class="clearfix">
+        <label for="dataSource">Currently showing data from </label>
+        <select name="dataSource" id="dataSource" @onchange="DataSourceIsChanged">
+            <option value="api" selected>API</option>
+            <option value="memory">Memory</option>
+        </select>
+        <button class="float-end button-margin" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
+        <button class="float-end button-margin" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display10))">Show 10</button>
+        <button class="float-end button-margin" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display05))">Show 5</button>
+    </div>
     <p></p>
-    <p>Showing @UsersToDisplay?.Count of @_users.Count users.</p>
+
+    <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
 
     <table class="table">
         <thead>

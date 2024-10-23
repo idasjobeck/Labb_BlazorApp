@@ -66,3 +66,13 @@ h1:focus {
 .extra-spacing-bottom {
     padding-bottom: 15px !important;
 }
+
+.right-aligned {
+    text-align: right;
+    font-style: italic;
+}
+
+.button-margin {
+    margin-right: 5px;
+    margin-left: 5px;
+}

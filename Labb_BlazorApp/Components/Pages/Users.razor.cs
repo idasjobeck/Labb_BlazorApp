@@ -2,7 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Components;
 using static Labb_BlazorApp.Components.Pages.Users;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -23,6 +26,8 @@ public partial class Users
     public List<User>? UsersToDisplay { get; set; }
     public UserService MyUserService = new UserService();
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
+    private string _url = "https://jsonplaceholder.typicode.com/users";
+    private string _currentlyShowingDataFrom = "API";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -30,22 +35,36 @@ public partial class Users
         {
             await Task.Delay(3500); //change to 3500 later. Set to 500 atm to shorten wait time when running app to test it.
 
-            _users = MyUserService.GetUsers().ToList();
-            
-            if (_users.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
-            {
-                ResetUsersToDisplayToAll();
-                UsersToDisplay = _users.OrderBy(user => user.FirstName).ToList();
-            }
-            else
-            {
-                UsersToDisplay = _users.OrderBy(user => user.FirstName).Take((int)_numberOfItemsToDisplay).ToList();
-            }
-                
+            //_users = MyUserService.GetUsers().ToList();
+            var usersFromApi = await MyUserService.GetUsers(_url);
+            _users = usersFromApi.ToList();
+            SetUsersToDisplay();
+            //if (_users.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
+            //{
+            //    ResetUsersToDisplayToAll();
+            //    UsersToDisplay = _users.OrderBy(user => user.FirstName).ToList();
+            //}
+            //else
+            //{
+            //    UsersToDisplay = _users.OrderBy(user => user.FirstName).Take((int)_numberOfItemsToDisplay).ToList();
+            //}
+
             StateHasChanged();
         }
     }
 
+    private void SetUsersToDisplay()
+    {
+        if (_users.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
+        {
+            ResetUsersToDisplayToAll();
+            UsersToDisplay = _users.OrderBy(user => user.FirstName).ToList();
+        }
+        else
+        {
+            UsersToDisplay = _users.OrderBy(user => user.FirstName).Take((int)_numberOfItemsToDisplay).ToList();
+        }
+    }
     private void ResetUsersToDisplayToAll()
     {
         UsersToDisplay = _users?.ToList();
@@ -66,15 +85,40 @@ public partial class Users
         UsersToDisplay = UsersToDisplay.Filter(_numberOfItemsToDisplay);
     }
 
+    private async Task DataSourceIsChanged(ChangeEventArgs args)
+    {
+        _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
 
+        switch (args.Value?.ToString())
+        {
+            case "api":
+                //get users from API
+                var usersFromApi = await MyUserService.GetUsers(_url);
+                _users = usersFromApi.ToList();
+                break;
+            case "memory":
+                //get users from memory
+                _users = MyUserService.GetUsers().ToList();
+                break;
+            default:
+                break;
+        }
+
+        SetUsersToDisplay();
+    }
 }
 
 public class User
 {
     private int _userId;
 
-    public int UserId { get => _userId; }
+    [JsonPropertyName("Id")]
+    public int UserId { 
+        get => _userId;
+        set => _userId = value;
+    }
 
+    [JsonPropertyName("Name")]
     public string FullName
     {
         get { return $"{FirstName} {LastName}"; }
@@ -98,6 +142,7 @@ public class User
     [RegularExpression(@"^[a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$", ErrorMessage = "The email entered must be in a valid format.")]
     public string Email { get; set; }
 
+    [JsonPropertyName("Phone")]
     public string PhoneNumber { get; set; }
 
     public string Website { get; set; }
@@ -166,6 +211,7 @@ public class Address
 
 public class Company
 {
+    [JsonPropertyName("Name")]
     public string? CompanyName { get; set; }
     public string? Catchphrase { get; set; }
 
@@ -182,13 +228,13 @@ public class Company
     }
 }
 
-public class UserService
+public class UserService : IUserService
 {
     public IEnumerable<User> GetUsers()
     {
         //random user data obtained from https://www.rndgen.com/data-generator; catchphrases from various Reddit threads.
 
-        return new List<User>()
+        return new List<User>
             {
                 new User(1, "James", "Kohler", "James.Kohler73@hotmail.com",  "+1 (322) 332-3404", "https://unwritten-lycra.info/", "313 Sawayn Street", "Lake Katelyntown", "6032", "Dibbert, Treutel and Conroy", "Feedback is the breakfast of champions."),
                 new User(2, "Doreen", "Glover", "Doreen92@yahoo.com", "+1 (560) 818-0710", "https://sophisticated-browser.org", "6374 Velma Trace", "Juliestead", "3803", "Cruickshank - Kub", "There's no traffic on the extra mile."),
@@ -201,6 +247,32 @@ public class UserService
                 new User(9, "Jeanne", "Mueller", "Jeanne.Mueller22@yahoo.com", "+1 (736) 489-1681", "https://astonishing-parchment.com/", "70933 Glenda Brooks", "South Gate", "6265", "Brakus Group", "If you don't have time to do it right, you definitely don't have time to do it over."),
                 new User(10, "Beulah", "Spencer", "Beulah34@yahoo.com", "+1 (461) 852-2303", "https://frail-productivity.org", "23731 Hackett Parks", "Prudenceboro", "4294", "Schmitt, Ferry and Fadel", "Fail to plan, plan to fail.")
             };
+    }
+
+    public async Task<IEnumerable<User>> GetUsers(string url)
+    {
+        var jsonData = await GetDataFromApi(url);
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var users = JsonSerializer.Deserialize<List<User>>(jsonData, options);
+
+        return users;
+    }
+
+    public async Task<string> GetDataFromApi(string url)
+    {
+        using HttpClient client = new HttpClient();
+        Task<string> dataFetched = client.GetStringAsync(url);
+
+        Console.WriteLine("Getting data from the web...");
+
+        var data = await dataFetched;
+
+        return data;
     }
 }
 
@@ -229,4 +301,11 @@ public static class UserExtensions
                 return users.ToList();
         }
     }
+}
+
+public interface IUserService
+{
+    public IEnumerable<User> GetUsers();
+
+    public Task<IEnumerable<User>> GetUsers(string url);
 }

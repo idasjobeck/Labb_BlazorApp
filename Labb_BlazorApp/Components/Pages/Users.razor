@@ -36,16 +36,16 @@ else
     <table class="table">
         <thead>
         <tr>
-            <th>User ID</th>
-            <th>First name</th>
-            <th>Last name</th>
-            <th>Email address</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID &uarr;&darr;</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.FirstName, true))">First name &uarr;&darr;</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.LastName, true))">Last name &uarr;&darr;</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Email, true))">Email address &uarr;&darr;</th>
             <th>Phone number</th>
             <th>Website</th>
             <th>Street</th>
             <th>City</th>
             <th>Zip Code</th>
-            <th>Company name</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Company, true))">Company name &uarr;&darr;</th>
             <th>Catchphrase</th>
         </tr>
         </thead>

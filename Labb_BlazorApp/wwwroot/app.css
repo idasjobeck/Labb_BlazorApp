@@ -76,3 +76,7 @@ h1:focus {
     margin-right: 5px;
     margin-left: 5px;
 }
+
+.sortable {
+    cursor: pointer;
+}

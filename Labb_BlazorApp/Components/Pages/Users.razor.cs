@@ -19,16 +19,31 @@ public enum NumberOfItemsToDisplay
     Display25 = 25,
     Display50 = 50
 }
+public enum SortOrder
+{
+    Ascending,
+    Descending
+}
+
+public enum SortByAttribute
+{
+    UserId,
+    FirstName,
+    LastName,
+    Email,
+    Company
+}
 
 public partial class Users
 {
     private List<User>? _users;
     public List<User>? UsersToDisplay { get; set; }
-    public IUserService UserService = new UserService();
-    public IDataProcessing DataProcessing = new DataProcessing();
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
+    public IUserService UserService = new UserService();
     private string _url = "https://jsonplaceholder.typicode.com/users";
-    private string _currentlyShowingDataFrom = "API";
+    public IDataProcessing DataProcessing = new DataProcessing();
+    private SortOrder _sortOrder = SortOrder.Ascending;
+    private SortByAttribute _sortBy = SortByAttribute.FirstName;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -73,6 +88,7 @@ public partial class Users
             _numberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
         }
 
+        SortUsers(_sortBy, false);
         UsersToDisplay = DataProcessing.Filter(UsersToDisplay, _numberOfItemsToDisplay);
     }
 
@@ -96,6 +112,23 @@ public partial class Users
         }
 
         SetUsersToDisplay();
+    }
+
+    private void ChangeSortDirection()
+    {
+        _sortOrder = _sortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+    }
+
+    private void SortUsers(SortByAttribute sortBy, bool changeSortDirection)
+    {
+        _sortBy = sortBy;
+
+        if (changeSortDirection)
+        {
+            ChangeSortDirection();
+        }
+
+        UsersToDisplay = DataProcessing.Sort(UsersToDisplay, _sortBy, _sortOrder);
     }
 }
 
@@ -293,11 +326,54 @@ public class DataProcessing : IDataProcessing
                 return users.ToList();
         }
     }
+
+    public List<User> Sort(IEnumerable<User> users, SortByAttribute sortBy, SortOrder sortOrder)
+    {
+        if (sortOrder == SortOrder.Ascending)
+        {
+            switch (sortBy)
+            {
+                case SortByAttribute.UserId:
+                    return users.OrderBy(users => users.UserId).ToList();
+                case SortByAttribute.FirstName:
+                    return users.OrderBy(users => users.FirstName).ToList();
+                case SortByAttribute.LastName:
+                    return users.OrderBy(users => users.LastName).ToList();
+                case SortByAttribute.Email:
+                    return users.OrderBy(users => users.Email).ToList();
+                case SortByAttribute.Company:
+                    return users.OrderBy(users => users.Company.CompanyName).ToList();
+                default:
+                    return users.ToList();
+            }
+        }
+        else if (sortOrder == SortOrder.Descending)
+        {
+            switch (sortBy)
+            {
+                case SortByAttribute.UserId:
+                    return users.OrderByDescending(users => users.UserId).ToList();
+                case SortByAttribute.FirstName:
+                    return users.OrderByDescending(users => users.FirstName).ToList();
+                case SortByAttribute.LastName:
+                    return users.OrderByDescending(users => users.LastName).ToList();
+                case SortByAttribute.Email:
+                    return users.OrderByDescending(users => users.Email).ToList();
+                case SortByAttribute.Company:
+                    return users.OrderByDescending(users => users.Company.CompanyName).ToList();
+                default:
+                    return users.ToList();
+            }
+        }
+
+        return users.ToList();
+    }
 }
 
 public interface IDataProcessing
 {
     public List<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay);
+    public List<User> Sort(IEnumerable<User> users, SortByAttribute sortBy, SortOrder sortOrder);
 }
 
 public static class UserExtensions

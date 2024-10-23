@@ -33,21 +33,11 @@ public partial class Users
     {
         if (firstRender)
         {
-            await Task.Delay(3500); //change to 3500 later. Set to 500 atm to shorten wait time when running app to test it.
+            await Task.Delay(3500);
 
-            //_users = MyUserService.GetUsers().ToList();
             var usersFromApi = await MyUserService.GetUsers(_url);
             _users = usersFromApi.ToList();
             SetUsersToDisplay();
-            //if (_users.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
-            //{
-            //    ResetUsersToDisplayToAll();
-            //    UsersToDisplay = _users.OrderBy(user => user.FirstName).ToList();
-            //}
-            //else
-            //{
-            //    UsersToDisplay = _users.OrderBy(user => user.FirstName).Take((int)_numberOfItemsToDisplay).ToList();
-            //}
 
             StateHasChanged();
         }

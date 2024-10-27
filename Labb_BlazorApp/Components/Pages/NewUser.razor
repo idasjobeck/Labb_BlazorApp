@@ -7,46 +7,56 @@
 <PageTitle>New User</PageTitle>
 
 
-<h3>Register New User</h3>
+<h2>Register New User</h2>
 @if (displayForm)
 {
     <p><i>Fields noted with <span class="text-danger"><b>*</b></span> are mandatory fields.</i></p>
 
     <EditForm Model="@_user" OnValidSubmit="AddUserToDb">
         <DataAnnotationsValidator />
-        <label class="form-label"><b>Name</b></label><span class="text-danger"><b> *</b></span><br />
-        <div class="spacing-bottom">
-            <InputText class="testclass1" id="firstName" @bind-Value="_user.FirstName" placeholder="First Name" /><br />
-            <ValidationMessage For="@(() => _user.FirstName)" />
+        <div class="container">
+            <div class="col-3">
+                <label class="form-label"><b>Name</b></label><span class="text-danger"><b> *</b></span>
+                <div class="input-group-sm mb-1">
+                    <InputText class="form-control" id="firstName" @bind-Value="_user.FirstName" placeholder="First Name"/>
+                    <ValidationMessage For="@(() => _user.FirstName)"/>
+                </div>
+                <div class="input-group-sm mb-2">
+                    <InputText class="form-control" id="lastName" @bind-Value="_user.LastName" placeholder="Last Name"/>
+                    <ValidationMessage For="@(() => _user.LastName)"/>
+                </div>
+                <label class="form-label"><b>Email</b></label><span class="text-danger"><b> *</b></span>
+                <div class="input-group-sm mb-2">
+                    <InputText class="form-control" id="email" @bind-Value="_user.Email" placeholder="Email Address"/>
+                    <ValidationMessage For="@(() => _user.Email)"/>
+                </div>
+                <label class="form-label"><b>Company</b></label>
+                <div class="input-group-sm mb-1">
+                    <InputText class="form-control" id="company" @bind-Value="_user.Company.CompanyName" placeholder="Company Name"/>
+                </div>
+                <div class="input-group-sm mb-2">
+                    <InputText class="form-control" id="catchphrase" @bind-Value="_user.Company.Catchphrase" placeholder="Company Catchphrase"/>
+                </div>
+                <label class="form-label"><b>Address</b></label>
+                <div class="input-group-sm mb-1">
+                    <InputText class="form-control" id="street" @bind-Value="_user.Address.Street" placeholder="Street"/>
+                </div>
+                <div class="input-group-sm mb-1">
+                    <InputText class="form-control" id="city" @bind-Value="_user.Address.City" placeholder="City"/>
+                </div>
+                <div class="input-group-sm mb-3">
+                    <InputText class="form-control" id="zipCode" @bind-Value="_user.Address.ZipCode" placeholder="Zip code"/>
+                </div>
+            </div>
         </div>
-        <div class="spacing-bottom">
-            <InputText id="lastName" @bind-Value="_user.LastName" placeholder="Last Name" /><br />
-            <ValidationMessage For="@(() => _user.LastName)" />
+        <div class="container">
+            <div class="col-3">
+                <div class="input-group-sm text-center">
+                    <button type="submit" class=" btn btn-outline-primary btn-sm button-margin">Submit</button>
+                    <button type="reset" class=" btn btn-outline-secondary btn-sm button-margin">Reset</button>
+                </div>
+            </div>
         </div>
-        <label class="form-label"><b>Email</b></label><span class="text-danger"><b> *</b></span><br />
-        <div class="spacing-bottom">
-            <InputText id="email" @bind-Value="_user.Email" placeholder="Email Address" /><br />
-            <ValidationMessage For="@(() => _user.Email)" />
-        </div>
-        <label class="form-label"><b>Company</b></label><br />
-        <div class="spacing-bottom">
-            <InputText id="company" @bind-Value="_user.Company.CompanyName" placeholder="Company Name" /><br />
-        </div>
-        <div class="spacing-bottom">
-            <InputText id="catchphrase" @bind-Value="_user.Company.Catchphrase" placeholder="Company Catchphrase" /><br />
-        </div>
-        <label class="form-label"><b>Address</b></label><br />
-        <div class="spacing-bottom">
-            <InputText id="street" @bind-Value="_user.Address.Street" placeholder="Street" /><br />
-        </div>
-        <div class="spacing-bottom">
-            <InputText id="city" @bind-Value="_user.Address.City" placeholder="City" /><br />
-        </div>
-        <div class="extra-spacing-bottom">
-            <InputText id="zipCode" @bind-Value="_user.Address.ZipCode" placeholder="Zip code" /><br />
-        </div>
-            <button type="submit" class="button-margin button-padding">Submit</button>
-        <button type="reset" class="button-margin button-padding">Reset</button>
     </EditForm>
 }
 else

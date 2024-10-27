@@ -73,8 +73,8 @@ h1:focus {
 }
 
 .button-margin {
-    margin-right: 5px;
-    margin-left: 5px;
+    margin-right: 10px;
+    margin-left: 10px;
 }
 
 .button-padding {
@@ -84,4 +84,12 @@ h1:focus {
 
 .sortable {
     cursor: pointer;
+}
+
+.current-sort-order {
+    color: black;
+}
+
+.not-sorted {
+    color: slategrey
 }

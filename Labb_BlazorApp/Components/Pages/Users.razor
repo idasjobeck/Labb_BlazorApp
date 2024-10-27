@@ -5,7 +5,22 @@
 
 <PageTitle>Users</PageTitle>
 
-<span><h3>Users</h3></span>
+<div class="container">
+    <div class="row justify-content-between">
+        <div class="col-2">
+            <h2>Users</h2>
+        </div>
+        <div class="col-2">
+            <div class="input-group-sm mb-5">
+                <label for="dataSource">Showing data from</label>
+                <select name="dataSource" id="dataSource" class="form-select" @onchange=" DataSourceIsChanged">
+                    <option value="api" selected>API</option>
+                    <option value="memory">Memory</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
 
 @if (_users == null)
 {
@@ -14,53 +29,56 @@
 }
 else
 {
-    <div class="clearfix">
-        <div class="float-end mb-5">
-            <label for="dataSource">Currently showing data from</label>
-            <select name="dataSource" id="dataSource" class="form-select-sm" @onchange=" DataSourceIsChanged">
-                <option value="api" selected>API</option>
-                <option value="memory">Memory</option>
-            </select>
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-3">
+                <div class="input-group input-group-sm mb-3">
+                    <label class="input-group-text" for="inputGroupSelect01">Search criteria: </label>
+                    <select class="form-select" id="inputGroupSelect01" @onchange="SearchCriteriaIsChanged">
+                        <option value="none" selected>Please select</option>
+                        <option value="userId">User ID</option>
+                        <option value="firstName">First name</option>
+                        <option value="lastName">Last name</option>
+                        <option value="email">Email address</option>
+                        <option value="company">Company name</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group input-group-sm mb-3">
+                    <input class="form-control" type="text" placeholder="search term" aria-label="search term" aria-describedby="button-addon2" @bind=_searchTerm>
+                    <button type="button" id="button-addon2" class="btn btn-outline-secondary" disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
+                </div>
+            </div>
+            <div class="col-3 mb-3"></div>
+            <div class="col-3 mb-3">
+                <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
+                <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display10))">Show 10</button>
+                <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display05))">Show 5</button>
+            </div>
+            </div>
+        <div class="row justify-content-end">
+            <div class="col-3">
+                <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
+            </div>
         </div>
     </div>
 
-    <div class="clearfix">
-        <div class="mb-3">
-            <label for="inputGroupSelect01">Select search criteria: </label>
-            <select class="form-select-sm" id="inputGroupSelect01" @onchange="SearchCriteriaIsChanged">
-                <option value="none" selected>Please select</option>
-                <option value="userId">User ID</option>
-                <option value="firstName">First name</option>
-                <option value="lastName">Last name</option>
-                <option value="email">Email address</option>
-                <option value="company">Company name</option>
-            </select>
-
-            <input type="text" placeholder="search term" aria-label="search term" aria-describedby="button-addon2" @bind=_searchTerm>
-            <button type="button" id="button-addon2" class="button-padding" disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
-
-            <button class="float-end button-margin button-padding" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
-            <button class="float-end button-margin button-padding" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display10))">Show 10</button>
-            <button class="float-end button-margin button-padding" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display05))">Show 5</button>
-        </div>
-
-    </div>
-
-    <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
+    
 
     <table class="table">
         <thead>
         <tr>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID &uarr;&darr;</th>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.FirstName, true))">First name &uarr;&darr;</th>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.LastName, true))">Last name &uarr;&darr;</th>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Email, true))">Email address &uarr;&darr;</th>
+                <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID @((MarkupString)_sortOrderIndicatorUserID)</th>
+                <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.FirstName, true))">First name @((MarkupString)_sortOrderIndicatorFirstName)</th>
+                <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.LastName, true))">Last name @((MarkupString)_sortOrderIndicatorLastName)</th>
+                <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Email, true))">Email address @((MarkupString)_sortOrderIndicatorEmail)</th>
             <th>Phone number</th>
             <th>Website</th>
             <th>Street</th>
             <th>City</th>
             <th>Zip Code</th>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Company, true))">Company name &uarr;&darr;</th>
+                <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Company, true))">Company name @((MarkupString)_sortOrderIndicatorCompanyName)</th>
             <th>Catchphrase</th>
         </tr>
         </thead>

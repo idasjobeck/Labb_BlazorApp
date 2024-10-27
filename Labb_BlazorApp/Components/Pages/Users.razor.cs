@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Html;
 using static Labb_BlazorApp.Components.Pages.Users;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -57,6 +58,17 @@ public partial class Users
     private SearchCriteria _searchCriteria = SearchCriteria.None;
     private bool _searchDisabled = true;
     private string _searchTerm;
+    private readonly string _sortOrderIndicatorNotSortedDblArrow = "<i class=\"fa-solid fa-sort\"></i>";
+    private readonly string _sortOrderIndicatorAscendingAZ = "<i class=\"fa-solid fa-arrow-down-a-z\"></i>";
+    private readonly string _sortOrderIndicatorDescendingZA = "<i class=\"fa-solid fa-arrow-up-z-a\"></i>";
+    private readonly string _sortOrderIndicatorAscending19 = "<i class=\"fa-solid fa-arrow-down-1-9\"></i>";
+    private readonly string _sortOrderIndicatorDescending91 = "<i class=\"fa-solid fa-arrow-up-9-1\"></i>";
+
+    private string _sortOrderIndicatorUserID,
+        _sortOrderIndicatorFirstName,
+        _sortOrderIndicatorLastName,
+        _sortOrderIndicatorEmail,
+        _sortOrderIndicatorCompanyName = "<i class=\"fa-solid fa-sort\"></i>"; //want to set them to _sortOrderIndicatorNotSortedDblArrow, but get error message that it can't set it to a non-static field.
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -67,6 +79,7 @@ public partial class Users
             var usersFromApi = await UserService.GetUsers(_url);
             _users = usersFromApi.ToList();
             SetUsersToDisplay();
+            SetSortOrderIndicator();
 
             StateHasChanged();
         }
@@ -74,6 +87,9 @@ public partial class Users
 
     private void SetUsersToDisplay()
     {
+        _sortBy = SortByAttribute.FirstName;
+        _sortOrder = SortOrder.Ascending;
+        
         if (_users.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
         {
             ResetUsersToDisplayToAll();
@@ -125,11 +141,102 @@ public partial class Users
         }
 
         SetUsersToDisplay();
+        SetSortOrderIndicator();
     }
 
     private void ChangeSortDirection()
     {
         _sortOrder = _sortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+    }
+
+    private void SetSortOrderIndicator()
+    {
+        if (_sortOrder == SortOrder.Ascending)
+        {
+            if (_sortBy == SortByAttribute.UserId)
+            {
+                _sortOrderIndicatorUserID = _sortOrderIndicatorAscending19;
+                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
+            }
+            else if (_sortBy == SortByAttribute.FirstName)
+            {
+                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorFirstName = _sortOrderIndicatorAscendingAZ;
+                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
+            }
+            else if (_sortBy == SortByAttribute.LastName)
+            {
+                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorLastName = _sortOrderIndicatorAscendingAZ;
+                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
+            }
+            else if (_sortBy == SortByAttribute.Email)
+            {
+                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorEmail = _sortOrderIndicatorAscendingAZ;
+                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
+            }
+            else if (_sortBy == SortByAttribute.Company)
+            {
+                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorCompanyName = _sortOrderIndicatorAscendingAZ;
+            }
+        }
+        else if (_sortOrder == SortOrder.Descending)
+        {
+            if (_sortBy == SortByAttribute.UserId)
+            {
+                _sortOrderIndicatorUserID = _sortOrderIndicatorDescending91;
+                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
+            }
+            else if (_sortBy == SortByAttribute.FirstName)
+            {
+                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorFirstName = _sortOrderIndicatorDescendingZA;
+                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
+            }
+            else if (_sortBy == SortByAttribute.LastName)
+            {
+                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorLastName = _sortOrderIndicatorDescendingZA;
+                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
+            }
+            else if (_sortBy == SortByAttribute.Email)
+            {
+                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorEmail = _sortOrderIndicatorDescendingZA;
+                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
+            }
+            else if (_sortBy == SortByAttribute.Company)
+            {
+                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
+                _sortOrderIndicatorCompanyName = _sortOrderIndicatorDescendingZA;
+            }
+        }
     }
 
     private void SortUsers(SortByAttribute sortBy, bool changeSortDirection)
@@ -142,6 +249,7 @@ public partial class Users
         }
 
         UsersToDisplay = DataProcessing.Sort(UsersToDisplay, _sortBy, _sortOrder);
+        SetSortOrderIndicator();
     }
 
     private void SearchCriteriaIsChanged(ChangeEventArgs args)
@@ -179,7 +287,7 @@ public partial class Users
             _searchDisabled = false;
     }
 
-    private void SearchUsers() //(SearchCriteria searchCriteria, string searchTerm)
+    private void SearchUsers()
     {
         UsersToDisplay = DataProcessing.Search(UsersToDisplay, _searchCriteria, _searchTerm);
     }
@@ -344,8 +452,6 @@ public class UserService : IUserService
     {
         using HttpClient client = new HttpClient();
         Task<string> dataFetched = client.GetStringAsync(url);
-
-        Console.WriteLine("Getting data from the web...");
 
         var data = await dataFetched;
 

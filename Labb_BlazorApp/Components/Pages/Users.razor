@@ -12,8 +12,8 @@
         </div>
         <div class="col-2">
             <div class="input-group-sm mb-5">
-                <label for="dataSource">Showing data from</label>
-                <select name="dataSource" id="dataSource" class="form-select" @onchange=" DataSourceIsChanged">
+                <label for="dataSource">Showing data from:</label>
+                <select name="dataSource" id="dataSource" class="form-select" disabled=@_dataSourceDisabled @onchange="DataSourceIsChanged">
                     <option value="api" selected>API</option>
                     <option value="memory">Memory</option>
                 </select>

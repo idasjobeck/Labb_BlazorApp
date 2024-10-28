@@ -63,6 +63,7 @@ public partial class Users
     private readonly string _sortOrderIndicatorDescendingZA = "<i class=\"fa-solid fa-arrow-up-z-a\"></i>";
     private readonly string _sortOrderIndicatorAscending19 = "<i class=\"fa-solid fa-arrow-down-1-9\"></i>";
     private readonly string _sortOrderIndicatorDescending91 = "<i class=\"fa-solid fa-arrow-up-9-1\"></i>";
+    private bool _dataSourceDisabled = true;
 
     private string _sortOrderIndicatorUserID,
         _sortOrderIndicatorFirstName,
@@ -80,6 +81,7 @@ public partial class Users
             _users = usersFromApi.ToList();
             SetUsersToDisplay();
             SetSortOrderIndicator();
+            _dataSourceDisabled = false;
 
             StateHasChanged();
         }

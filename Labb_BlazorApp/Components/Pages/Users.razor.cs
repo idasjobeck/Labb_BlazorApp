@@ -120,7 +120,7 @@ public partial class Users
         }
 
         SortUsers(_sortBy, false);
-        UsersToDisplay = DataProcessing.Filter(UsersToDisplay, _numberOfItemsToDisplay);
+        UsersToDisplay = DataProcessing.Filter(UsersToDisplay, _numberOfItemsToDisplay).ToList();
     }
 
     private async Task DataSourceIsChanged(ChangeEventArgs args)
@@ -216,7 +216,7 @@ public partial class Users
             ChangeSortDirection();
         }
 
-        UsersToDisplay = DataProcessing.Sort(UsersToDisplay, _sortBy, _sortOrder);
+        UsersToDisplay = DataProcessing.Sort(UsersToDisplay, _sortBy, _sortOrder).ToList();
         SetSortOrderIndicator();
     }
 
@@ -244,7 +244,7 @@ public partial class Users
 
     private void SearchUsers()
     {
-        UsersToDisplay = DataProcessing.Search(UsersToDisplay, _searchCriteria, _searchTerm);
+        UsersToDisplay = DataProcessing.Search(UsersToDisplay, _searchCriteria, _searchTerm).ToList();
     }
 }
 
@@ -423,7 +423,7 @@ public interface IUserService
 
 public class DataProcessing : IUserDataProcessing
 {
-    public List<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay)
+    public IEnumerable<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay)
     {
         users = numberOfItemsToDisplay switch
         {
@@ -435,10 +435,10 @@ public class DataProcessing : IUserDataProcessing
             _ => users
         };
 
-        return users.ToList();
+        return users;
     }
 
-    public List<User> Sort(IEnumerable<User> users, SortByAttribute sortBy, SortOrder sortOrder)
+    public IEnumerable<User> Sort(IEnumerable<User> users, SortByAttribute sortBy, SortOrder sortOrder)
     {
         if (sortOrder == SortOrder.Ascending)
         {
@@ -465,10 +465,10 @@ public class DataProcessing : IUserDataProcessing
             };
         }
 
-        return users.ToList();
+        return users;
     }
 
-    public List<User> Search(IEnumerable<User> users, SearchCriteria searchCriteria, string searchTerm)
+    public IEnumerable<User> Search(IEnumerable<User> users, SearchCriteria searchCriteria, string searchTerm)
     {
         users = searchCriteria switch
         {
@@ -485,15 +485,15 @@ public class DataProcessing : IUserDataProcessing
             _ => users
         };
 
-        return users.ToList();
+        return users;
     }
 }
 
 public interface IUserDataProcessing
 {
-    public List<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay);
-    public List<User> Sort(IEnumerable<User> users, SortByAttribute sortBy, SortOrder sortOrder);
-    public List<User> Search(IEnumerable<User> users, SearchCriteria searchCriteria, string searchTerm);
+    public IEnumerable<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay);
+    public IEnumerable<User> Sort(IEnumerable<User> users, SortByAttribute sortBy, SortOrder sortOrder);
+    public IEnumerable<User> Search(IEnumerable<User> users, SearchCriteria searchCriteria, string searchTerm);
 }
 
 public static class UserExtensions

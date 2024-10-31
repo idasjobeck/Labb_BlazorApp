@@ -259,29 +259,16 @@ public partial class Users
         //clear search input box
         _searchTerm = string.Empty;
 
-        switch (args.Value?.ToString()) //change to switch expression?
+        _searchCriteria = args.Value?.ToString() switch
         {
-            case "none":
-                _searchCriteria = SearchCriteria.None;
-                break;
-            case "userId":
-                _searchCriteria = SearchCriteria.UserId;
-                break;
-            case "firstName":
-                _searchCriteria = SearchCriteria.FirstName;
-                break;
-            case "lastName":
-                _searchCriteria = SearchCriteria.LastName;
-                break;
-            case "email":
-                _searchCriteria = SearchCriteria.Email;
-                break;
-            case "company":
-                _searchCriteria = SearchCriteria.Company;
-                break;
-            default:
-                break;
-        }
+            "none" => SearchCriteria.None,
+            "userId" => SearchCriteria.UserId,
+            "firstName" => SearchCriteria.FirstName,
+            "lastName" => SearchCriteria.LastName,
+            "email" => SearchCriteria.Email,
+            "company" => SearchCriteria.Company,
+            _ => SearchCriteria.None
+        };
 
         if (_searchCriteria == SearchCriteria.None)
             _searchDisabled = true;
@@ -472,59 +459,44 @@ public class DataProcessing : IUserDataProcessing
 {
     public List<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay)
     {
-        switch (numberOfItemsToDisplay)
+        users = numberOfItemsToDisplay switch
         {
-            case NumberOfItemsToDisplay.Display05:
-                return users.Take((int)NumberOfItemsToDisplay.Display05).ToList();
-            case NumberOfItemsToDisplay.Display10:
-                return users.Take((int)NumberOfItemsToDisplay.Display10).ToList();
-            case NumberOfItemsToDisplay.Display25:
-                return users.Take((int)NumberOfItemsToDisplay.Display25).ToList();
-            case NumberOfItemsToDisplay.Display50:
-                return users.Take((int)NumberOfItemsToDisplay.Display50).ToList();
-            case NumberOfItemsToDisplay.DisplayAll:
-            default:
-                return users.ToList();
-        }
+            NumberOfItemsToDisplay.Display05 => users.Take((int)NumberOfItemsToDisplay.Display05),
+            NumberOfItemsToDisplay.Display10 => users.Take((int)NumberOfItemsToDisplay.Display10),
+            NumberOfItemsToDisplay.Display25 => users.Take((int)NumberOfItemsToDisplay.Display25),
+            NumberOfItemsToDisplay.Display50 => users.Take((int)NumberOfItemsToDisplay.Display50),
+            NumberOfItemsToDisplay.DisplayAll => users,
+            _ => users
+        };
+
+        return users.ToList();
     }
 
     public List<User> Sort(IEnumerable<User> users, SortByAttribute sortBy, SortOrder sortOrder)
     {
         if (sortOrder == SortOrder.Ascending)
         {
-            switch (sortBy)
+            users = sortBy switch
             {
-                case SortByAttribute.UserId:
-                    return users.OrderBy(users => users.UserId).ToList();
-                case SortByAttribute.FirstName:
-                    return users.OrderBy(users => users.FirstName).ToList();
-                case SortByAttribute.LastName:
-                    return users.OrderBy(users => users.LastName).ToList();
-                case SortByAttribute.Email:
-                    return users.OrderBy(users => users.Email).ToList();
-                case SortByAttribute.Company:
-                    return users.OrderBy(users => users.Company.CompanyName).ToList();
-                default:
-                    return users.ToList();
-            }
+                SortByAttribute.UserId => users.OrderBy(users => users.UserId),
+                SortByAttribute.FirstName => users.OrderBy(users => users.FirstName),
+                SortByAttribute.LastName => users.OrderBy(users => users.LastName),
+                SortByAttribute.Email => users.OrderBy(users => users.Email),
+                SortByAttribute.Company => users.OrderBy(users => users.Company.CompanyName),
+                _ => users
+            };
         }
         else if (sortOrder == SortOrder.Descending)
         {
-            switch (sortBy)
+            users = sortBy switch
             {
-                case SortByAttribute.UserId:
-                    return users.OrderByDescending(users => users.UserId).ToList();
-                case SortByAttribute.FirstName:
-                    return users.OrderByDescending(users => users.FirstName).ToList();
-                case SortByAttribute.LastName:
-                    return users.OrderByDescending(users => users.LastName).ToList();
-                case SortByAttribute.Email:
-                    return users.OrderByDescending(users => users.Email).ToList();
-                case SortByAttribute.Company:
-                    return users.OrderByDescending(users => users.Company.CompanyName).ToList();
-                default:
-                    return users.ToList();
-            }
+                SortByAttribute.UserId => users.OrderByDescending(users => users.UserId),
+                SortByAttribute.FirstName => users.OrderByDescending(users => users.FirstName),
+                SortByAttribute.LastName => users.OrderByDescending(users => users.LastName),
+                SortByAttribute.Email => users.OrderByDescending(users => users.Email),
+                SortByAttribute.Company => users.OrderByDescending(users => users.Company.CompanyName),
+                _ => users
+            };
         }
 
         return users.ToList();
@@ -532,32 +504,20 @@ public class DataProcessing : IUserDataProcessing
 
     public List<User> Search(IEnumerable<User> users, SearchCriteria searchCriteria, string searchTerm)
     {
-        switch (searchCriteria)
+        users = searchCriteria switch
         {
-            case SearchCriteria.UserId:
-                users = users.Where(users =>
-                    users.UserId.ToString().Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
-                break;
-            case SearchCriteria.FirstName:
-                users = users.Where(users =>
-                    users.FirstName.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
-                break;
-            case SearchCriteria.LastName:
-                users = users.Where(users =>
-                    users.LastName.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
-                break;
-            case SearchCriteria.Email:
-                users = users.Where(users =>
-                    users.Email.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
-                break;
-            case SearchCriteria.Company:
-                users = users.Where(users =>
-                    users.Company.CompanyName.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
-                break;
-            case SearchCriteria.None:
-            default:
-                break;
-        }
+            SearchCriteria.UserId => users.Where(users =>
+                users.UserId.ToString().Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase)),
+            SearchCriteria.FirstName => users.Where(users =>
+                users.FirstName.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase)),
+            SearchCriteria.LastName => users.Where(users =>
+                users.LastName.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase)),
+            SearchCriteria.Email => users.Where(users =>
+                users.Email.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase)),
+            SearchCriteria.Company => users.Where(users =>
+                users.Company.CompanyName.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase)),
+            _ => users
+        };
 
         return users.ToList();
     }

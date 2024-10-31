@@ -153,90 +153,56 @@ public partial class Users
 
     private void SetSortOrderIndicator()
     {
+        _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
+        _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
+        _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
+        _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
+        _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
+
         if (_sortOrder == SortOrder.Ascending)
         {
-            if (_sortBy == SortByAttribute.UserId)
+            switch (_sortBy)
             {
-                _sortOrderIndicatorUserID = _sortOrderIndicatorAscending19;
-                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
-            }
-            else if (_sortBy == SortByAttribute.FirstName)
-            {
-                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorFirstName = _sortOrderIndicatorAscendingAZ;
-                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
-            }
-            else if (_sortBy == SortByAttribute.LastName)
-            {
-                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorLastName = _sortOrderIndicatorAscendingAZ;
-                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
-            }
-            else if (_sortBy == SortByAttribute.Email)
-            {
-                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorEmail = _sortOrderIndicatorAscendingAZ;
-                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
-            }
-            else if (_sortBy == SortByAttribute.Company)
-            {
-                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorCompanyName = _sortOrderIndicatorAscendingAZ;
+                case SortByAttribute.UserId:
+                    _sortOrderIndicatorUserID = _sortOrderIndicatorAscending19;
+                    break;
+                case SortByAttribute.FirstName:
+                    _sortOrderIndicatorFirstName = _sortOrderIndicatorAscendingAZ;
+                    break;
+                case SortByAttribute.LastName:
+                    _sortOrderIndicatorLastName = _sortOrderIndicatorAscendingAZ;
+                    break;
+                case SortByAttribute.Email:
+                    _sortOrderIndicatorEmail = _sortOrderIndicatorAscendingAZ;
+                    break;
+                case SortByAttribute.Company:
+                    _sortOrderIndicatorCompanyName = _sortOrderIndicatorAscendingAZ;
+                    break;
+                default:
+                    break;
             }
         }
         else if (_sortOrder == SortOrder.Descending)
         {
-            if (_sortBy == SortByAttribute.UserId)
+            switch (_sortBy)
             {
-                _sortOrderIndicatorUserID = _sortOrderIndicatorDescending91;
-                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
-            }
-            else if (_sortBy == SortByAttribute.FirstName)
-            {
-                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorFirstName = _sortOrderIndicatorDescendingZA;
-                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
-            }
-            else if (_sortBy == SortByAttribute.LastName)
-            {
-                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorLastName = _sortOrderIndicatorDescendingZA;
-                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
-            }
-            else if (_sortBy == SortByAttribute.Email)
-            {
-                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorEmail = _sortOrderIndicatorDescendingZA;
-                _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
-            }
-            else if (_sortBy == SortByAttribute.Company)
-            {
-                _sortOrderIndicatorUserID = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
-                _sortOrderIndicatorCompanyName = _sortOrderIndicatorDescendingZA;
+                case SortByAttribute.UserId:
+                    _sortOrderIndicatorUserID = _sortOrderIndicatorDescending91;
+                    break;
+                case SortByAttribute.FirstName:
+                    _sortOrderIndicatorFirstName = _sortOrderIndicatorDescendingZA;
+                    break;
+                case SortByAttribute.LastName:
+                    _sortOrderIndicatorLastName = _sortOrderIndicatorDescendingZA;
+                    break;
+                case SortByAttribute.Email:
+                    _sortOrderIndicatorEmail = _sortOrderIndicatorDescendingZA;
+                    break;
+                case SortByAttribute.Company:
+                    _sortOrderIndicatorCompanyName = _sortOrderIndicatorDescendingZA;
+                    break;
+                default:
+                    break;
             }
         }
     }

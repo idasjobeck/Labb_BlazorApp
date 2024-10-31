@@ -4,6 +4,7 @@ public partial class NewUser
 {
     public bool displayForm = true;
     private User _user = new User();
+    private string _defaultIfFieldNotCompleted = "unknown";
     
     private void AddUserToDb()
     {

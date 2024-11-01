@@ -1,4 +1,6 @@
-﻿namespace Labb_BlazorApp.Components.Pages;
+﻿using Labb_BlazorApp.Models;
+
+namespace Labb_BlazorApp.Components.Pages;
 
 public partial class NewUser
 {

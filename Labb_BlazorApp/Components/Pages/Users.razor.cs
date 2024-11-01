@@ -51,7 +51,7 @@ public partial class Users
     public List<User>? UsersToDisplay { get; set; }
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
     public IUserService UserService = new UserService();
-    private string _url = "https://jsonplaceholder.typicode.com/users";
+    private string _url = "https://jsonplaceholder.typicode.com/user";
     public IUserDataProcessing DataProcessing = new DataProcessing();
     private SortOrder _sortOrder = SortOrder.Ascending;
     private SortByAttribute _sortBy = SortByAttribute.FirstName;
@@ -66,7 +66,9 @@ public partial class Users
     private readonly string _sortOrderIndicatorDescending91 = "<i class=\"fa-solid fa-arrow-up-9-1\"></i>";
     private bool _dataSourceDisabled = true;
     private string _resetSearchCriteriaDropdown = "<option value=\"none\" selected>Please select</option>";
-    //private string _testReset;
+    //private string _testReset; //Was testing resetting the search criteria dropdown when changing data source. Binding a variable will reset it, but can't have the onchange at the same time.
+    private string _loadingUserdataMessage = "Loading...";
+    private readonly string _selectOtherDataSourceOnErrorMessage = "Please select an alternative data source from the drop-down in the top right-hand corner.";
 
     private string _sortOrderIndicatorUserID,
         _sortOrderIndicatorFirstName,
@@ -76,17 +78,40 @@ public partial class Users
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        try
         {
-            await Task.Delay(3500);
+            if (firstRender)
+            {
+                await Task.Delay(3500);
 
-            var usersFromApi = await UserService.GetUsers(_url);
-            _users = usersFromApi.ToList();
-            SetUsersToDisplay();
-            SetSortOrderIndicator();
-            _dataSourceDisabled = false;
+                var usersFromApi = await UserService.GetUsers(_url);
+                _users = usersFromApi.ToList();
+                SetUsersToDisplay();
+                SetSortOrderIndicator();
+                _dataSourceDisabled = false;
 
-            StateHasChanged();
+                StateHasChanged();
+            }
+        }
+        catch (HttpRequestException e) //can be thrown by the HttpClient.GetStringAsync method
+        {
+            ErrorHandling(e, "404 (Not Found)");
+        }
+        catch (InvalidOperationException e) //can be thrown by the HttpClient.GetStringAsync method
+        {
+            ErrorHandling(e, "The request URL is in an invalid format.");
+        }
+        catch (TaskCanceledException e) //can be thrown by the HttpClient.GetStringAsync method
+        {
+            ErrorHandling(e, "The request failed due to timeout.");
+        }
+        catch (UriFormatException e) //can be thrown by the HttpClient.GetStringAsync method
+        {
+            ErrorHandling(e, "The provided request URI is not valid relative or absolute URI.");
+        }
+        catch (Exception e)
+        {
+            ErrorHandling(e, "Unknown error.");
         }
     }
 
@@ -129,26 +154,58 @@ public partial class Users
 
     private async Task DataSourceIsChanged(ChangeEventArgs args)
     {
-        _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
-
-        switch (args.Value?.ToString())
+        try
         {
-            case "api":
-                //get users from API
-                var usersFromApi = await UserService.GetUsers(_url);
-                _users = usersFromApi.ToList();
-                break;
-            case "memory":
-                //get users from memory
-                _users = UserService.GetUsers().ToList();
-                break;
-            default:
-                break;
-        }
+            _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
+            _loadingUserdataMessage = "Loading...";
 
-        SetUsersToDisplay();
-        SetSortOrderIndicator();
-        ResetSearchOptions();
+            switch (args.Value?.ToString())
+            {
+                case "api":
+                    //get users from API
+                    var usersFromApi = await UserService.GetUsers(_url);
+                    _users = usersFromApi.ToList();
+                    break;
+                case "memory":
+                    //get users from memory
+                    _users = UserService.GetUsers().ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            SetUsersToDisplay();
+            SetSortOrderIndicator();
+            ResetSearchOptions();
+        }
+        catch (ArgumentNullException e) //can be thrown by the JsonSerializer.Deserialize method
+        {
+            ErrorHandling(e, "utf8Json or jsonTypeInfo is null.");
+        }
+        catch (JsonException e) //can be thrown by the JsonSerializer.Deserialize method
+        {
+            ErrorHandling(e, "The JSON is invalid.");
+        }
+        catch (HttpRequestException e) //can be thrown by the HttpClient.GetStringAsync method
+        {
+            ErrorHandling(e, "404 (Not Found)");
+        }
+        catch (InvalidOperationException e) //can be thrown by the HttpClient.GetStringAsync method
+        {
+            ErrorHandling(e, "The request URL is in an invalid format.");
+        }
+        catch (TaskCanceledException e)  //can be thrown by the HttpClient.GetStringAsync method
+        {
+            ErrorHandling(e, "The request failed due to timeout.");
+        }
+        catch (UriFormatException e) //can be thrown by the HttpClient.GetStringAsync method
+        {
+            ErrorHandling(e, "The provided request URI is not valid relative or absolute URI.");
+        }
+        catch (Exception e)
+        {
+            ErrorHandling(e, "Unknown error.");
+        }
     }
 
     private void ChangeSortDirection() => _sortOrder = _sortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
@@ -269,6 +326,26 @@ public partial class Users
 
         //_testReset = "none"; //Was testing resetting the search criteria dropdown when changing data source. Binding a variable will reset it, but can't have the onchange at the same time.
     }
+
+    private void ErrorHandling(Exception e)
+    {
+        //ideally log the exception, e.Message
+        _loadingUserdataMessage = $"An error has occured: {e.Message}";
+        AllowDataSourceSelectionOnError();
+    }
+
+    private void ErrorHandling(Exception e, string userFriendlyErrorMessage)
+    {
+        //ideally log the exception, e.Message
+        _loadingUserdataMessage = $"An error has occured: {userFriendlyErrorMessage}";
+        AllowDataSourceSelectionOnError();
+    }
+
+    private void AllowDataSourceSelectionOnError()
+    {
+        _dataSourceDisabled = false;
+        StateHasChanged();
+    }
 }
 
 public class User
@@ -284,7 +361,7 @@ public class User
     [JsonPropertyName("Name")]
     public string FullName
     {
-        get { return $"{FirstName} {LastName}"; }
+        get => $"{FirstName} {LastName}";
         set
         {
             var fullName = value.Split(' ');
@@ -428,7 +505,6 @@ public class UserService : IUserService
 
     public async Task<string> GetDataFromApi(string url)
     {
-        //add try-catch around this?
         using HttpClient client = new HttpClient();
         Task<string> dataFetched = client.GetStringAsync(url);
 

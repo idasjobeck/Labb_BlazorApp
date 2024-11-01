@@ -105,6 +105,7 @@ public partial class Users
             UsersToDisplay = _users.OrderBy(user => user.FirstName).Take((int)_numberOfItemsToDisplay).ToList();
         }
     }
+
     private void ResetUsersToDisplayToAll()
     {
         UsersToDisplay = _users?.ToList();
@@ -150,10 +151,7 @@ public partial class Users
         ResetSearchOptions();
     }
 
-    private void ChangeSortDirection()
-    {
-        _sortOrder = _sortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
-    }
+    private void ChangeSortDirection() => _sortOrder = _sortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
 
     private void SetSortOrderIndicator()
     {
@@ -225,30 +223,6 @@ public partial class Users
     }
 
     private void SearchCriteriaIsChanged(ChangeEventArgs args)
-    {
-        //clear search input box
-        _searchTerm = string.Empty;
-
-        _searchCriteria = args.Value?.ToString() switch
-        {
-            "none" => SearchCriteria.None,
-            "userId" => SearchCriteria.UserId,
-            "firstName" => SearchCriteria.FirstName,
-            "lastName" => SearchCriteria.LastName,
-            "email" => SearchCriteria.Email,
-            "company" => SearchCriteria.Company,
-            _ => SearchCriteria.None
-        };
-
-        if (_searchCriteria == SearchCriteria.None)
-            _searchDisabled = true;
-        else
-            _searchDisabled = false;
-
-        _searchButtonClass = _searchDisabled ? "btn btn-outline-secondary" : "btn btn-outline-primary";
-    }
-
-    private async Task SearchCriteriaIsChangedAsync(ChangeEventArgs args)
     {
         //clear search input box
         _searchTerm = string.Empty;

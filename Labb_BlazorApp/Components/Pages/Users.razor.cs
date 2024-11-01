@@ -57,6 +57,7 @@ public partial class Users
     private SortByAttribute _sortBy = SortByAttribute.FirstName;
     private SearchCriteria _searchCriteria = SearchCriteria.None;
     private bool _searchDisabled = true;
+    private string _searchButtonClass = "btn btn-outline-secondary";
     private string _searchTerm;
     private readonly string _sortOrderIndicatorNotSortedDblArrow = "<i class=\"fa-solid fa-sort\"></i>";
     private readonly string _sortOrderIndicatorAscendingAZ = "<i class=\"fa-solid fa-arrow-down-a-z\"></i>";
@@ -64,6 +65,8 @@ public partial class Users
     private readonly string _sortOrderIndicatorAscending19 = "<i class=\"fa-solid fa-arrow-down-1-9\"></i>";
     private readonly string _sortOrderIndicatorDescending91 = "<i class=\"fa-solid fa-arrow-up-9-1\"></i>";
     private bool _dataSourceDisabled = true;
+    private string _resetSearchCriteriaDropdown = "<option value=\"none\" selected>Please select</option>";
+    //private string _testReset;
 
     private string _sortOrderIndicatorUserID,
         _sortOrderIndicatorFirstName,
@@ -144,6 +147,7 @@ public partial class Users
 
         SetUsersToDisplay();
         SetSortOrderIndicator();
+        ResetSearchOptions();
     }
 
     private void ChangeSortDirection()
@@ -240,11 +244,56 @@ public partial class Users
             _searchDisabled = true;
         else
             _searchDisabled = false;
+
+        _searchButtonClass = _searchDisabled ? "btn btn-outline-secondary" : "btn btn-outline-primary";
+    }
+
+    private async Task SearchCriteriaIsChangedAsync(ChangeEventArgs args)
+    {
+        //clear search input box
+        _searchTerm = string.Empty;
+
+        _searchCriteria = args.Value?.ToString() switch
+        {
+            "none" => SearchCriteria.None,
+            "userId" => SearchCriteria.UserId,
+            "firstName" => SearchCriteria.FirstName,
+            "lastName" => SearchCriteria.LastName,
+            "email" => SearchCriteria.Email,
+            "company" => SearchCriteria.Company,
+            _ => SearchCriteria.None
+        };
+
+        if (_searchCriteria == SearchCriteria.None)
+            _searchDisabled = true;
+        else
+            _searchDisabled = false;
+
+        _searchButtonClass = _searchDisabled ? "btn btn-outline-secondary" : "btn btn-outline-primary";
     }
 
     private void SearchUsers()
     {
         UsersToDisplay = DataProcessing.Search(UsersToDisplay, _searchCriteria, _searchTerm).ToList();
+    }
+
+    private void ResetSearchOptions()
+    {
+        //clear search input box
+        _searchTerm = string.Empty;
+        //set search criteria to none
+        _searchCriteria = SearchCriteria.None; //This does not reset the drop-down for search criteria though.
+        //disable search button
+        _searchDisabled = true;
+        _searchButtonClass = _searchDisabled ? "btn btn-outline-secondary" : "btn btn-outline-primary";
+
+        //reset drop-down for search criteria to "please select"
+        //could not find a way to change the drop-down selection from C#, so adding/removing a space in the label for the drop-down option as below.
+        _resetSearchCriteriaDropdown = _resetSearchCriteriaDropdown == "<option value=\"none\" selected>Please select </option>"
+            ? "<option value=\"none\" selected>Please select</option>"
+            : "<option value=\"none\" selected>Please select </option>";
+
+        //_testReset = "none"; //Was testing resetting the search criteria dropdown when changing data source. Binding a variable will reset it, but can't have the onchange at the same time.
     }
 }
 
@@ -405,6 +454,7 @@ public class UserService : IUserService
 
     public async Task<string> GetDataFromApi(string url)
     {
+        //add try-catch around this?
         using HttpClient client = new HttpClient();
         Task<string> dataFetched = client.GetStringAsync(url);
 

@@ -35,7 +35,9 @@ else
                 <div class="input-group input-group-sm mb-3">
                     <label class="input-group-text" for="inputGroupSelect01">Search criteria: </label>
                     <select class="form-select" id="inputGroupSelect01" @onchange="SearchCriteriaIsChanged">
-                        <option value="none" selected>Please select</option>
+                        @* @bind=_testReset> *@ @* Was testing resetting the search criteria dropdown when changing data source. Binding a variable will reset it, but can't have the onchange at the same time. *@
+                        @* <option value="none" selected>Please select</option> *@
+                        @((MarkupString)_resetSearchCriteriaDropdown)
                         <option value="userId">User ID</option>
                         <option value="firstName">First name</option>
                         <option value="lastName">Last name</option>
@@ -47,7 +49,7 @@ else
             <div class="col-3">
                 <div class="input-group input-group-sm mb-3">
                     <input class="form-control" type="text" placeholder="search term" aria-label="search term" aria-describedby="button-addon2" @bind=_searchTerm>
-                    <button type="button" id="button-addon2" class="btn btn-outline-secondary" disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
+                    <button type="button" id="button-addon2" class=@_searchButtonClass disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
                 </div>
             </div>
             <div class="col-3 mb-3"></div>
@@ -57,28 +59,25 @@ else
                 <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display05))">Show 5</button>
             </div>
             </div>
-        <div class="row justify-content-end">
-            <div class="col-3">
-                <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
-            </div>
-        </div>
     </div>
 
-    
+
+    <p></p>
+    <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
 
     <table class="table">
         <thead>
         <tr>
-                <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID @((MarkupString)_sortOrderIndicatorUserID)</th>
-                <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.FirstName, true))">First name @((MarkupString)_sortOrderIndicatorFirstName)</th>
-                <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.LastName, true))">Last name @((MarkupString)_sortOrderIndicatorLastName)</th>
-                <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Email, true))">Email address @((MarkupString)_sortOrderIndicatorEmail)</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID @((MarkupString)_sortOrderIndicatorUserID)</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.FirstName, true))">First name @((MarkupString)_sortOrderIndicatorFirstName)</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.LastName, true))">Last name @((MarkupString)_sortOrderIndicatorLastName)</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Email, true))">Email address @((MarkupString)_sortOrderIndicatorEmail)</th>
             <th>Phone number</th>
             <th>Website</th>
             <th>Street</th>
             <th>City</th>
             <th>Zip Code</th>
-                <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Company, true))">Company name @((MarkupString)_sortOrderIndicatorCompanyName)</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Company, true))">Company name @((MarkupString)_sortOrderIndicatorCompanyName)</th>
             <th>Catchphrase</th>
         </tr>
         </thead>
@@ -101,6 +100,7 @@ else
         }
         </tbody>
     </table>
+
     <p></p>
     <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
 }

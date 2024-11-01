@@ -68,7 +68,7 @@ else
             <div class="col-3">
                 <div class="input-group input-group-sm mb-3">
                     <input class="form-control" type="text" placeholder="search term" aria-label="search term" aria-describedby="button-addon2" @bind=_searchTerm>
-                    <button type="button" id="button-addon2" class=@_searchButtonClass disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
+                        <button type="button" id="button-addon2" class="btn btn-outline-secondary" disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
                 </div>
             </div>
             <div class="col-3 mb-3"></div>
@@ -87,7 +87,7 @@ else
     <table class="table">
         <thead>
         <tr>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID @((MarkupString)_sortOrderIndicatorUserID)</th>
+            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID @((MarkupString)_sortOrderIndicatorUserId)</th>
             <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.FirstName, true))">First name @((MarkupString)_sortOrderIndicatorFirstName)</th>
             <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.LastName, true))">Last name @((MarkupString)_sortOrderIndicatorLastName)</th>
             <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Email, true))">Email address @((MarkupString)_sortOrderIndicatorEmail)</th>
@@ -101,7 +101,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var user in UsersToDisplay)
+        @foreach (var user in UsersToDisplay!)
         {
             <tr>
                 <td>@user.UserId</td>

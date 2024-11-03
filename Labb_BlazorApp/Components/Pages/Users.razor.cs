@@ -10,6 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Labb_BlazorApp.Extensions;
 using Labb_BlazorApp.Models;
 using Labb_BlazorApp.Services;
+using CsvHelper;
 
 namespace Labb_BlazorApp.Components.Pages;
 
@@ -53,6 +54,8 @@ public partial class Users
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
     public IUserService UserService = new UserService();
     private readonly string _url = "https://jsonplaceholder.typicode.com/users";
+    private readonly string _filePath = "..\\Labb_BlazorApp\\wwwroot\\resources\\customers-100.csv"; //C:\Users\idasj\source\repos\ITHS\Programmering_C#\Labb_BlazorApp\Labb_BlazorApp\wwwroot\resources\customers-100.csv
+    private readonly char _csvDelimiter = ',';
     public IUserDataProcessing DataProcessing = new DataProcessing();
     private SortOrder _sortOrder = SortOrder.Ascending;
     private SortByAttribute _sortBy = SortByAttribute.FirstName;
@@ -83,7 +86,7 @@ public partial class Users
         {
             if (firstRender)
             {
-                await Task.Delay(3500);
+                await Task.Delay(2500);
 
                 var usersFromApi = await UserService.GetUsers(_url);
                 _users = usersFromApi.ToList();
@@ -171,6 +174,10 @@ public partial class Users
                     //get users from memory
                     _users = UserService.GetUsers().ToList();
                     break;
+                case "csv":
+                    //get users from csv file
+                    _users = UserService.GetUsers(_filePath, _csvDelimiter).ToList();
+                    break;
                 default:
                     break;
             }
@@ -191,17 +198,29 @@ public partial class Users
         {
             ErrorHandling(e, "404 (Not Found)");
         }
-        catch (InvalidOperationException e) //can be thrown by the HttpClient.GetStringAsync method
+        catch (InvalidOperationException e) //can be thrown by the HttpClient.GetStringAsync method and CsvHelper.CsvReader.GetRecords<T> method
         {
-            ErrorHandling(e, "The request URL is in an invalid format.");
+            ErrorHandling(e); //error messages vary, so not providing a "user friendly" error message for this exception.
         }
-        catch (TaskCanceledException e)  //can be thrown by the HttpClient.GetStringAsync method
+        catch (TaskCanceledException e) //can be thrown by the HttpClient.GetStringAsync method
         {
             ErrorHandling(e, "The request failed due to timeout.");
         }
         catch (UriFormatException e) //can be thrown by the HttpClient.GetStringAsync method
         {
             ErrorHandling(e, "The provided request URI is not valid relative or absolute URI.");
+        }
+        catch (FileNotFoundException e) //can be thrown by the CsvHelper.CsvReader.GetRecords<T> method
+        {
+            ErrorHandling(e, "Could not find the file.");
+        }
+        catch (DirectoryNotFoundException e) //can be thrown by the CsvHelper.CsvReader.GetRecords<T> method
+        {
+            ErrorHandling(e, "Could not find a part of the path"); 
+        }
+        catch (HeaderValidationException e) //can be thrown by the CsvHelper.CsvReader.GetRecords<T> method
+        {
+            ErrorHandling(e);
         }
         catch (Exception e)
         {

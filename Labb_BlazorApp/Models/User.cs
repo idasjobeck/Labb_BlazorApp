@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using CsvHelper.Configuration;
 using Labb_BlazorApp.Components.Pages;
 
 namespace Labb_BlazorApp.Models;
@@ -81,5 +82,24 @@ public class User
         Website = website;
         Address = new Address(street, city, zipcode);
         Company = new Company(companyName, catchphrase);
+    }
+}
+
+//Mapping for the fields in the "..\Labb_BlazorApp\wwwroot\resources\customers-100.csv" file used to load users from CSV.
+public sealed class UserMap : ClassMap<User>
+{
+    public UserMap()
+    {
+        Map(user => user.UserId).Name("Index");
+        Map(user => user.FirstName).Name("First Name");
+        Map(user => user.LastName).Name("Last Name");
+        Map(user => user.Email).Name("Email");
+        Map(user => user.PhoneNumber).Name("Phone 1");
+        Map(user => user.Website).Name("Website");
+        Map(user => user.Address.Street).Constant("unknown");
+        Map(user => user.Address.ZipCode).Constant("unknown");
+        Map(user => user.Address.City).Name("City");
+        Map(user => user.Company.CompanyName).Name("Company");
+        Map(user => user.Company.Catchphrase).Constant("unknown");
     }
 }

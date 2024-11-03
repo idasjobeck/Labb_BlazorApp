@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
+using CsvHelper;
 using Labb_BlazorApp.Models;
 
 namespace Labb_BlazorApp.Services;
@@ -46,5 +48,18 @@ public class UserService : IUserService
         var data = await dataFetched;
 
         return data;
+    }
+
+    public IEnumerable<User> GetUsers(string filePath, char delimiter = ',')
+    {
+        using (var reader = new StreamReader(filePath))
+        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+        {
+            //var users = csv.GetRecords<User>().ToList();
+            //return users;
+            csv.Context.RegisterClassMap<UserMap>();
+            var users = csv.GetRecords<User>().ToList();
+            return users;
+        }
     }
 }

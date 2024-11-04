@@ -55,7 +55,7 @@ public partial class Users
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
     private SortOrder _sortOrder = SortOrder.Ascending;
     private SortByAttribute _sortBy = SortByAttribute.FirstName;
-    private string _sortOrderIndicatorUserId, _sortOrderIndicatorFirstName, _sortOrderIndicatorLastName, _sortOrderIndicatorEmail, _sortOrderIndicatorCompanyName;
+    private UserSortOrderIndicators _sortOrderIndicator = new UserSortOrderIndicators();
     private SearchCriteria _searchCriteria = SearchCriteria.None;
     private bool _searchDisabled = true;
     private string _searchTerm = string.Empty;
@@ -73,13 +73,12 @@ public partial class Users
             {
                 await Task.Delay(3500); //set back to 3500 later
 
-                //instantiate relevant UserService here?
                 IUserService userService = new UserService();
                 var url = "https://jsonplaceholder.typicode.com/users";
                 var usersFromApi = await userService.GetUsers(url);
                 _users = usersFromApi.ToList();
                 SetUsersToDisplay();
-                SetSortOrderIndicator();
+                _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, _sortBy);
                 _dataSourceDisabled = false;
 
                 StateHasChanged();
@@ -144,7 +143,7 @@ public partial class Users
             var filePath = "..\\Labb_BlazorApp\\wwwroot\\resources\\customers-100.csv"; //C:\Users\idasj\source\repos\ITHS\Programmering_C#\Labb_BlazorApp\Labb_BlazorApp\wwwroot\resources\customers-100.csv
             var csvDelimiter = ',';
 
-            switch (args.Value?.ToString())
+            switch (args.Value?.ToString()) //make own method in another class
             {
                 case "api":
                     //get users from API
@@ -159,12 +158,12 @@ public partial class Users
                     //get users from csv file
                     _users = userService.GetUsers(filePath, csvDelimiter).ToList();
                     break;
-                default:
+                default: //throw exception
                     break;
             }
 
             SetUsersToDisplay();
-            SetSortOrderIndicator();
+            _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, _sortBy);
             ResetSearchOptions();
         }
         catch (ArgumentNullException e) //can be thrown by the JsonSerializer.Deserialize method
@@ -211,67 +210,7 @@ public partial class Users
 
     private void ChangeSortDirection() => _sortOrder = _sortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
 
-    private void SetSortOrderIndicator()
-    {
-        var sortOrderIndicatorNotSortedDblArrow = "<i class=\"fa-solid fa-sort\"></i>";
-        var sortOrderIndicatorAscendingAZ = "<i class=\"fa-solid fa-arrow-down-a-z\"></i>";
-        var sortOrderIndicatorDescendingZA = "<i class=\"fa-solid fa-arrow-up-z-a\"></i>";
-        var sortOrderIndicatorAscending19 = "<i class=\"fa-solid fa-arrow-down-1-9\"></i>";
-        var sortOrderIndicatorDescending91 = "<i class=\"fa-solid fa-arrow-up-9-1\"></i>";
-
-        _sortOrderIndicatorUserId = sortOrderIndicatorNotSortedDblArrow;
-        _sortOrderIndicatorFirstName = sortOrderIndicatorNotSortedDblArrow;
-        _sortOrderIndicatorLastName = sortOrderIndicatorNotSortedDblArrow;
-        _sortOrderIndicatorEmail = sortOrderIndicatorNotSortedDblArrow;
-        _sortOrderIndicatorCompanyName = sortOrderIndicatorNotSortedDblArrow;
-
-        if (_sortOrder == SortOrder.Ascending)
-        {
-            switch (_sortBy)
-            {
-                case SortByAttribute.UserId:
-                    _sortOrderIndicatorUserId = sortOrderIndicatorAscending19;
-                    break;
-                case SortByAttribute.FirstName:
-                    _sortOrderIndicatorFirstName = sortOrderIndicatorAscendingAZ;
-                    break;
-                case SortByAttribute.LastName:
-                    _sortOrderIndicatorLastName = sortOrderIndicatorAscendingAZ;
-                    break;
-                case SortByAttribute.Email:
-                    _sortOrderIndicatorEmail = sortOrderIndicatorAscendingAZ;
-                    break;
-                case SortByAttribute.Company:
-                    _sortOrderIndicatorCompanyName = sortOrderIndicatorAscendingAZ;
-                    break;
-                default:
-                    break;
-            }
-        }
-        else if (_sortOrder == SortOrder.Descending)
-        {
-            switch (_sortBy)
-            {
-                case SortByAttribute.UserId:
-                    _sortOrderIndicatorUserId = sortOrderIndicatorDescending91;
-                    break;
-                case SortByAttribute.FirstName:
-                    _sortOrderIndicatorFirstName = sortOrderIndicatorDescendingZA;
-                    break;
-                case SortByAttribute.LastName:
-                    _sortOrderIndicatorLastName = sortOrderIndicatorDescendingZA;
-                    break;
-                case SortByAttribute.Email:
-                    _sortOrderIndicatorEmail = sortOrderIndicatorDescendingZA;
-                    break;
-                case SortByAttribute.Company:
-                    _sortOrderIndicatorCompanyName = sortOrderIndicatorDescendingZA;
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
+    
 
     private void SortUsers(SortByAttribute sortBy, bool changeSortDirection)
     {
@@ -282,7 +221,7 @@ public partial class Users
 
         IUserDataProcessing DataProcessing = new DataProcessing();
         UsersToDisplay = DataProcessing.Sort(UsersToDisplay!, _sortBy, _sortOrder).ToList();
-        SetSortOrderIndicator();
+        _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, sortBy);
     }
 
     private void SearchCriteriaIsChanged(ChangeEventArgs args)

@@ -25,11 +25,11 @@
 
 @if (_users == null)
 {
-    <div class ="text-center">
+    <div class="text-center">
         <p>@_loadingUserdataMessage</p>
         @if (_loadingUserdataMessage == "Loading...")
         {
-            <img src="/resources/giphy_duck.gif" width="100" height="100"/>
+            <img src="/resources/giphy_duck.gif" width="100" height="100" />
         }
         else
         {
@@ -49,81 +49,81 @@ else
     else
     {
 
-    <div class="container-fluid">
-        <div class="row justify-content-between">
-            <div class="col-3">
-                <div class="input-group input-group-sm mb-3">
-                    <label class="input-group-text" for="inputGroupSelect01">Search criteria: </label>
-                    <select class="form-select" id="inputGroupSelect01" @onchange="SearchCriteriaIsChanged">
-                        @* @bind=_testReset> *@ @* Was testing resetting the search criteria dropdown when changing data source. Binding a variable will reset it, but can't have the onchange at the same time. *@
-                        @* <option value="none" selected>Please select</option> *@
-                        @((MarkupString)_resetSearchCriteriaDropdown)
-                        <option value="userId">User ID</option>
-                        <option value="firstName">First name</option>
-                        <option value="lastName">Last name</option>
-                        <option value="email">Email address</option>
-                        <option value="company">Company name</option>
-                    </select>
+        <div class="container-fluid">
+            <div class="row justify-content-between">
+                <div class="col-3">
+                    <div class="input-group input-group-sm mb-3">
+                        <label class="input-group-text" for="inputGroupSelect01">Search criteria: </label>
+                        <select class="form-select" id="inputGroupSelect01" @onchange="SearchCriteriaIsChanged">
+                            @* @bind=_testReset> *@ @* Was testing resetting the search criteria dropdown when changing data source. Binding a variable will reset it, but can't have the onchange at the same time. *@
+                            @* <option value="none" selected>Please select</option> *@
+                            @((MarkupString)_resetSearchCriteriaDropdown)
+                            <option value="userId">User ID</option>
+                            <option value="firstName">First name</option>
+                            <option value="lastName">Last name</option>
+                            <option value="email">Email address</option>
+                            <option value="company">Company name</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="col-3">
-                <div class="input-group input-group-sm mb-3">
-                    <input class="form-control" type="text" placeholder="search term" aria-label="search term" aria-describedby="button-addon2" id="search-term" @bind=_searchTerm>
+                <div class="col-3">
+                    <div class="input-group input-group-sm mb-3">
+                        <input class="form-control" type="text" placeholder="search term" aria-label="search term" aria-describedby="button-addon2" id="search-term" @bind=_searchTerm>
                         <button type="button" id="button-addon2" class="btn btn-outline-secondary" disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
+                    </div>
+                </div>
+                <div class="col-2 mb-3"></div>
+                <div class="col-4 mb-3">
+                    <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
+                    <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display50))">Show 50</button>
+                    <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display25))">Show 25</button>
+                    <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display10))">Show 10</button>
+                    <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display05))">Show 5</button>
                 </div>
             </div>
-            <div class="col-2 mb-3"></div>
-            <div class="col-4 mb-3">
-                <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
-                <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display50))">Show 50</button>
-                <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display25))">Show 25</button>
-                <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display10))">Show 10</button>
-                <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display05))">Show 5</button>
-            </div>
-            </div>
-    </div>
+        </div>
 
 
-    <p></p>
-    <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
+        <p></p>
+        <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID @((MarkupString)_sortOrderIndicatorUserId)</th>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.FirstName, true))">First name @((MarkupString)_sortOrderIndicatorFirstName)</th>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.LastName, true))">Last name @((MarkupString)_sortOrderIndicatorLastName)</th>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Email, true))">Email address @((MarkupString)_sortOrderIndicatorEmail)</th>
-            <th>Phone number</th>
-            <th>Website</th>
-            <th>Street</th>
-            <th>City</th>
-            <th>Zip Code</th>
-            <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Company, true))">Company name @((MarkupString)_sortOrderIndicatorCompanyName)</th>
-            <th>Catchphrase</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var user in UsersToDisplay!)
-        {
-            <tr>
-                <td>@user.UserId</td>
-                <td>@user.FirstName</td>
-                <td>@user.LastName</td>
-                <td>@user.Email</td>
-                <td>@user.PhoneNumber</td>
-                <td>@user.Website</td>
-                <td>@user.Address.Street</td>
-                <td>@user.Address.City</td>
-                <td>@user.Address.ZipCode</td>
-                <td>@user.Company.CompanyName</td>
-                <td>@user.Company.Catchphrase</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID @((MarkupString)_sortOrderIndicator.SortOrderIndicatorUserId)</th>
+                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.FirstName, true))">First name @((MarkupString)_sortOrderIndicator.SortOrderIndicatorFirstName)</th>
+                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.LastName, true))">Last name @((MarkupString)_sortOrderIndicator.SortOrderIndicatorLastName)</th>
+                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Email, true))">Email address @((MarkupString)_sortOrderIndicator.SortOrderIndicatorEmail)</th>
+                    <th>Phone number</th>
+                    <th>Website</th>
+                    <th>Street</th>
+                    <th>City</th>
+                    <th>Zip Code</th>
+                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Company, true))">Company name @((MarkupString)_sortOrderIndicator.SortOrderIndicatorCompanyName)</th>
+                    <th>Catchphrase</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in UsersToDisplay!)
+                {
+                    <tr>
+                        <td>@user.UserId</td>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Email</td>
+                        <td>@user.PhoneNumber</td>
+                        <td>@user.Website</td>
+                        <td>@user.Address.Street</td>
+                        <td>@user.Address.City</td>
+                        <td>@user.Address.ZipCode</td>
+                        <td>@user.Company.CompanyName</td>
+                        <td>@user.Company.Catchphrase</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-    <p></p>
-    <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
+        <p></p>
+        <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
     }
 }

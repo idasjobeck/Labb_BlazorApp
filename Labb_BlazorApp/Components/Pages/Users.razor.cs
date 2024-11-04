@@ -52,33 +52,26 @@ public partial class Users
     private List<User>? _users;
     public List<User>? UsersToDisplay { get; set; }
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
-    public IUserService UserService = new UserService();
+    public IUserService UserService = new UserService(); //move instantiation of UserService into the methods that gets users?
+
+    //move the below parameters for getting users into the methods that gets users?
     private readonly string _url = "https://jsonplaceholder.typicode.com/users";
     private readonly string _filePath = "..\\Labb_BlazorApp\\wwwroot\\resources\\customers-100.csv"; //C:\Users\idasj\source\repos\ITHS\Programmering_C#\Labb_BlazorApp\Labb_BlazorApp\wwwroot\resources\customers-100.csv
     private readonly char _csvDelimiter = ',';
-    public IUserDataProcessing DataProcessing = new DataProcessing();
+
+    public IUserDataProcessing DataProcessing = new DataProcessing(); //move instantiation of DataProcessing into the methods that use it?
+
     private SortOrder _sortOrder = SortOrder.Ascending;
     private SortByAttribute _sortBy = SortByAttribute.FirstName;
+    private string _sortOrderIndicatorUserId, _sortOrderIndicatorFirstName, _sortOrderIndicatorLastName, _sortOrderIndicatorEmail, _sortOrderIndicatorCompanyName;
     private SearchCriteria _searchCriteria = SearchCriteria.None;
     private bool _searchDisabled = true;
-    //private string _searchButtonClass = "btn btn-outline-secondary";
     private string _searchTerm = string.Empty;
-    private readonly string _sortOrderIndicatorNotSortedDblArrow = "<i class=\"fa-solid fa-sort\"></i>";
-    private readonly string _sortOrderIndicatorAscendingAZ = "<i class=\"fa-solid fa-arrow-down-a-z\"></i>";
-    private readonly string _sortOrderIndicatorDescendingZA = "<i class=\"fa-solid fa-arrow-up-z-a\"></i>";
-    private readonly string _sortOrderIndicatorAscending19 = "<i class=\"fa-solid fa-arrow-down-1-9\"></i>";
-    private readonly string _sortOrderIndicatorDescending91 = "<i class=\"fa-solid fa-arrow-up-9-1\"></i>";
     private bool _dataSourceDisabled = true;
-    private string _resetSearchCriteriaDropdown = "<option value=\"none\" selected>Please select</option>";
-    //private string _testReset; //Was testing resetting the search criteria dropdown when changing data source. Binding a variable will reset it, but can't have the onchange at the same time.
+    private string _resetSearchCriteriaDropdown = "<option value=\"none\" selected>Please select</option>"; // this needs fixing with a better solution
     private string _loadingUserdataMessage = "Loading...";
     private readonly string _selectOtherDataSourceOnErrorMessage = "Please select an alternative data source from the drop-down in the top right-hand corner.";
 
-    private string _sortOrderIndicatorUserId = "<i class=\"fa-solid fa-sort\"></i>";
-    private string _sortOrderIndicatorFirstName = "<i class=\"fa-solid fa-sort\"></i>";
-    private string _sortOrderIndicatorLastName = "<i class=\"fa-solid fa-sort\"></i>";
-    private string _sortOrderIndicatorEmail = "<i class=\"fa-solid fa-sort\"></i>";
-    private string _sortOrderIndicatorCompanyName = "<i class=\"fa-solid fa-sort\"></i>"; //want to set them to _sortOrderIndicatorNotSortedDblArrow, but get error message that it can't set it to a non-static field.
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -86,8 +79,9 @@ public partial class Users
         {
             if (firstRender)
             {
-                await Task.Delay(2500);
+                await Task.Delay(3500); //set back to 3500 later
 
+                //instantiate relevant UserService here?
                 var usersFromApi = await UserService.GetUsers(_url);
                 _users = usersFromApi.ToList();
                 SetUsersToDisplay();
@@ -123,36 +117,24 @@ public partial class Users
     {
         _sortBy = SortByAttribute.FirstName;
         _sortOrder = SortOrder.Ascending;
-        
-        if (_users.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
-        {
-            ResetUsersToDisplayToAll();
-            UsersToDisplay = _users?.OrderBy(user => user.FirstName).ToList();
-        }
-        else
-        {
-            UsersToDisplay = _users?.OrderBy(user => user.FirstName).Take((int)_numberOfItemsToDisplay).ToList();
-        }
-    }
 
-    private void ResetUsersToDisplayToAll()
-    {
-        UsersToDisplay = _users?.ToList();
-        _numberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
+        //if "number of items to display" is greater than the count of users, then set "number of items to display" to all.
+        if (_users.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
+            _numberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
+
+        UsersToDisplay = _users?.OrderBy(user => user.FirstName).Take((int)_numberOfItemsToDisplay).ToList();
     }
 
     private void FilterUsers(NumberOfItemsToDisplay numberOfItemsToDisplay)
     {
         _numberOfItemsToDisplay = numberOfItemsToDisplay;
-        UsersToDisplay = _users?.ToList();
+        UsersToDisplay = _users?.ToList(); //reset UsersToDisplay to whole list of all users, ensuring that option to increase number of items to display works.
 
+        //if "number of items to display" is greater than the count of users, then set "number of items to display" to all.
         if (UsersToDisplay.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
-        {
-            //set to display all
             _numberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
-        }
 
-        SortUsers(_sortBy, false);
+        SortUsers(_sortBy, false); //maintain sort order
         UsersToDisplay = DataProcessing.Filter(UsersToDisplay!, _numberOfItemsToDisplay).ToList();
     }
 
@@ -167,15 +149,18 @@ public partial class Users
             {
                 case "api":
                     //get users from API
+                    //instantiate relevant UserService here?
                     var usersFromApi = await UserService.GetUsers(_url);
                     _users = usersFromApi.ToList();
                     break;
                 case "memory":
                     //get users from memory
+                    //instantiate relevant UserService here?
                     _users = UserService.GetUsers().ToList();
                     break;
                 case "csv":
                     //get users from csv file
+                    //instantiate relevant UserService here?
                     _users = UserService.GetUsers(_filePath, _csvDelimiter).ToList();
                     break;
                 default:
@@ -232,30 +217,36 @@ public partial class Users
 
     private void SetSortOrderIndicator()
     {
-        _sortOrderIndicatorUserId = _sortOrderIndicatorNotSortedDblArrow;
-        _sortOrderIndicatorFirstName = _sortOrderIndicatorNotSortedDblArrow;
-        _sortOrderIndicatorLastName = _sortOrderIndicatorNotSortedDblArrow;
-        _sortOrderIndicatorEmail = _sortOrderIndicatorNotSortedDblArrow;
-        _sortOrderIndicatorCompanyName = _sortOrderIndicatorNotSortedDblArrow;
+        var sortOrderIndicatorNotSortedDblArrow = "<i class=\"fa-solid fa-sort\"></i>";
+        var sortOrderIndicatorAscendingAZ = "<i class=\"fa-solid fa-arrow-down-a-z\"></i>";
+        var sortOrderIndicatorDescendingZA = "<i class=\"fa-solid fa-arrow-up-z-a\"></i>";
+        var sortOrderIndicatorAscending19 = "<i class=\"fa-solid fa-arrow-down-1-9\"></i>";
+        var sortOrderIndicatorDescending91 = "<i class=\"fa-solid fa-arrow-up-9-1\"></i>";
+
+        _sortOrderIndicatorUserId = sortOrderIndicatorNotSortedDblArrow;
+        _sortOrderIndicatorFirstName = sortOrderIndicatorNotSortedDblArrow;
+        _sortOrderIndicatorLastName = sortOrderIndicatorNotSortedDblArrow;
+        _sortOrderIndicatorEmail = sortOrderIndicatorNotSortedDblArrow;
+        _sortOrderIndicatorCompanyName = sortOrderIndicatorNotSortedDblArrow;
 
         if (_sortOrder == SortOrder.Ascending)
         {
             switch (_sortBy)
             {
                 case SortByAttribute.UserId:
-                    _sortOrderIndicatorUserId = _sortOrderIndicatorAscending19;
+                    _sortOrderIndicatorUserId = sortOrderIndicatorAscending19;
                     break;
                 case SortByAttribute.FirstName:
-                    _sortOrderIndicatorFirstName = _sortOrderIndicatorAscendingAZ;
+                    _sortOrderIndicatorFirstName = sortOrderIndicatorAscendingAZ;
                     break;
                 case SortByAttribute.LastName:
-                    _sortOrderIndicatorLastName = _sortOrderIndicatorAscendingAZ;
+                    _sortOrderIndicatorLastName = sortOrderIndicatorAscendingAZ;
                     break;
                 case SortByAttribute.Email:
-                    _sortOrderIndicatorEmail = _sortOrderIndicatorAscendingAZ;
+                    _sortOrderIndicatorEmail = sortOrderIndicatorAscendingAZ;
                     break;
                 case SortByAttribute.Company:
-                    _sortOrderIndicatorCompanyName = _sortOrderIndicatorAscendingAZ;
+                    _sortOrderIndicatorCompanyName = sortOrderIndicatorAscendingAZ;
                     break;
                 default:
                     break;
@@ -266,19 +257,19 @@ public partial class Users
             switch (_sortBy)
             {
                 case SortByAttribute.UserId:
-                    _sortOrderIndicatorUserId = _sortOrderIndicatorDescending91;
+                    _sortOrderIndicatorUserId = sortOrderIndicatorDescending91;
                     break;
                 case SortByAttribute.FirstName:
-                    _sortOrderIndicatorFirstName = _sortOrderIndicatorDescendingZA;
+                    _sortOrderIndicatorFirstName = sortOrderIndicatorDescendingZA;
                     break;
                 case SortByAttribute.LastName:
-                    _sortOrderIndicatorLastName = _sortOrderIndicatorDescendingZA;
+                    _sortOrderIndicatorLastName = sortOrderIndicatorDescendingZA;
                     break;
                 case SortByAttribute.Email:
-                    _sortOrderIndicatorEmail = _sortOrderIndicatorDescendingZA;
+                    _sortOrderIndicatorEmail = sortOrderIndicatorDescendingZA;
                     break;
                 case SortByAttribute.Company:
-                    _sortOrderIndicatorCompanyName = _sortOrderIndicatorDescendingZA;
+                    _sortOrderIndicatorCompanyName = sortOrderIndicatorDescendingZA;
                     break;
                 default:
                     break;
@@ -291,9 +282,7 @@ public partial class Users
         _sortBy = sortBy;
 
         if (changeSortDirection)
-        {
             ChangeSortDirection();
-        }
 
         UsersToDisplay = DataProcessing.Sort(UsersToDisplay!, _sortBy, _sortOrder).ToList();
         SetSortOrderIndicator();
@@ -320,10 +309,7 @@ public partial class Users
             _searchDisabled = false;
     }
 
-    private void SearchUsers()
-    {
-        UsersToDisplay = DataProcessing.Search(UsersToDisplay!, _searchCriteria, _searchTerm).ToList();
-    }
+    private void SearchUsers() => UsersToDisplay = DataProcessing.Search(UsersToDisplay!, _searchCriteria, _searchTerm).ToList();
 
     private void ResetSearchOptions()
     {
@@ -339,8 +325,6 @@ public partial class Users
         _resetSearchCriteriaDropdown = _resetSearchCriteriaDropdown == "<option value=\"none\" selected>Please select </option>"
             ? "<option value=\"none\" selected>Please select</option>"
             : "<option value=\"none\" selected>Please select </option>";
-
-        //_testReset = "none"; //Was testing resetting the search criteria dropdown when changing data source. Binding a variable will reset it, but can't have the onchange at the same time.
     }
 
     private void ErrorHandling(Exception e)

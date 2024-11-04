@@ -11,6 +11,7 @@ using Labb_BlazorApp.Extensions;
 using Labb_BlazorApp.Models;
 using Labb_BlazorApp.Services;
 using CsvHelper;
+using System;
 
 namespace Labb_BlazorApp.Components.Pages;
 
@@ -52,15 +53,6 @@ public partial class Users
     private List<User>? _users;
     public List<User>? UsersToDisplay { get; set; }
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
-    public IUserService UserService = new UserService(); //move instantiation of UserService into the methods that gets users?
-
-    //move the below parameters for getting users into the methods that gets users?
-    private readonly string _url = "https://jsonplaceholder.typicode.com/users";
-    private readonly string _filePath = "..\\Labb_BlazorApp\\wwwroot\\resources\\customers-100.csv"; //C:\Users\idasj\source\repos\ITHS\Programmering_C#\Labb_BlazorApp\Labb_BlazorApp\wwwroot\resources\customers-100.csv
-    private readonly char _csvDelimiter = ',';
-
-    public IUserDataProcessing DataProcessing = new DataProcessing(); //move instantiation of DataProcessing into the methods that use it?
-
     private SortOrder _sortOrder = SortOrder.Ascending;
     private SortByAttribute _sortBy = SortByAttribute.FirstName;
     private string _sortOrderIndicatorUserId, _sortOrderIndicatorFirstName, _sortOrderIndicatorLastName, _sortOrderIndicatorEmail, _sortOrderIndicatorCompanyName;
@@ -82,7 +74,9 @@ public partial class Users
                 await Task.Delay(3500); //set back to 3500 later
 
                 //instantiate relevant UserService here?
-                var usersFromApi = await UserService.GetUsers(_url);
+                IUserService userService = new UserService();
+                var url = "https://jsonplaceholder.typicode.com/users";
+                var usersFromApi = await userService.GetUsers(url);
                 _users = usersFromApi.ToList();
                 SetUsersToDisplay();
                 SetSortOrderIndicator();
@@ -135,6 +129,7 @@ public partial class Users
             _numberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
 
         SortUsers(_sortBy, false); //maintain sort order
+        IUserDataProcessing DataProcessing = new DataProcessing();
         UsersToDisplay = DataProcessing.Filter(UsersToDisplay!, _numberOfItemsToDisplay).ToList();
     }
 
@@ -144,24 +139,25 @@ public partial class Users
         {
             _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
             _loadingUserdataMessage = "Loading...";
+            IUserService userService = new UserService();
+            var url = "https://jsonplaceholder.typicode.com/users";
+            var filePath = "..\\Labb_BlazorApp\\wwwroot\\resources\\customers-100.csv"; //C:\Users\idasj\source\repos\ITHS\Programmering_C#\Labb_BlazorApp\Labb_BlazorApp\wwwroot\resources\customers-100.csv
+            var csvDelimiter = ',';
 
             switch (args.Value?.ToString())
             {
                 case "api":
                     //get users from API
-                    //instantiate relevant UserService here?
-                    var usersFromApi = await UserService.GetUsers(_url);
+                    var usersFromApi = await userService.GetUsers(url);
                     _users = usersFromApi.ToList();
                     break;
                 case "memory":
                     //get users from memory
-                    //instantiate relevant UserService here?
-                    _users = UserService.GetUsers().ToList();
+                    _users = userService.GetUsers().ToList();
                     break;
                 case "csv":
                     //get users from csv file
-                    //instantiate relevant UserService here?
-                    _users = UserService.GetUsers(_filePath, _csvDelimiter).ToList();
+                    _users = userService.GetUsers(filePath, csvDelimiter).ToList();
                     break;
                 default:
                     break;
@@ -284,6 +280,7 @@ public partial class Users
         if (changeSortDirection)
             ChangeSortDirection();
 
+        IUserDataProcessing DataProcessing = new DataProcessing();
         UsersToDisplay = DataProcessing.Sort(UsersToDisplay!, _sortBy, _sortOrder).ToList();
         SetSortOrderIndicator();
     }
@@ -309,7 +306,11 @@ public partial class Users
             _searchDisabled = false;
     }
 
-    private void SearchUsers() => UsersToDisplay = DataProcessing.Search(UsersToDisplay!, _searchCriteria, _searchTerm).ToList();
+    private void SearchUsers()
+    {
+        IUserDataProcessing DataProcessing = new DataProcessing();
+        UsersToDisplay = DataProcessing.Search(UsersToDisplay!, _searchCriteria, _searchTerm).ToList();
+    }
 
     private void ResetSearchOptions()
     {

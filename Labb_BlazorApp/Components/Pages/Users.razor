@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @using System.ComponentModel.DataAnnotations;
+@using Labb_BlazorApp.Extensions
 
 <PageTitle>Users</PageTitle>
 
@@ -54,15 +55,11 @@ else
                 <div class="col-3">
                     <div class="input-group input-group-sm mb-3">
                         <label class="input-group-text" for="inputGroupSelect01">Search criteria: </label>
-                        <select class="form-select" id="inputGroupSelect01" @onchange="SearchCriteriaIsChanged">
-                            @* @bind=_testReset> *@ @* Was testing resetting the search criteria dropdown when changing data source. Binding a variable will reset it, but can't have the onchange at the same time. *@
-                            @* <option value="none" selected>Please select</option> *@
-                            @((MarkupString)_resetSearchCriteriaDropdown)
-                            <option value="userId">User ID</option>
-                            <option value="firstName">First name</option>
-                            <option value="lastName">Last name</option>
-                            <option value="email">Email address</option>
-                            <option value="company">Company name</option>
+                        <select class="form-select" id="inputGroupSelect01" @bind:get="SearchCriteria" @bind:set="SearchCriteriaIsChanged">
+                            @foreach (var item in SearchCriteriaList)
+                            {
+                                <option value="@item">@item.StringValueOf()</option>
+                            }
                         </select>
                     </div>
                 </div>

@@ -12,6 +12,8 @@ using Labb_BlazorApp.Models;
 using Labb_BlazorApp.Services;
 using CsvHelper;
 using System;
+using System.ComponentModel;
+using Microsoft.Extensions.Primitives;
 
 namespace Labb_BlazorApp.Components.Pages;
 
@@ -40,12 +42,12 @@ public enum SortByAttribute
 
 public enum SearchCriteria
 {
-    None,
-    UserId,
-    FirstName,
-    LastName,
+    [Description("Please Select")]None,
+    [Description("User ID")]UserId,
+    [Description("First name")]FirstName,
+    [Description("Last name")]LastName,
     Email,
-    Company
+    [Description("Company name")]Company
 }
 
 public partial class Users
@@ -57,10 +59,19 @@ public partial class Users
     private SortByAttribute _sortBy = SortByAttribute.FirstName;
     private UserSortOrderIndicators _sortOrderIndicator = new UserSortOrderIndicators();
     private SearchCriteria _searchCriteria = SearchCriteria.None;
+    public SearchCriteria SearchCriteria
+    {
+        get => _searchCriteria;
+        set => _searchCriteria = value;
+    }
+    public List<SearchCriteria> SearchCriteriaList = new()
+    {
+        SearchCriteria.None, SearchCriteria.UserId, SearchCriteria.FirstName, SearchCriteria.LastName,
+        SearchCriteria.Email, SearchCriteria.Company
+    };
     private bool _searchDisabled = true;
     private string _searchTerm = string.Empty;
     private bool _dataSourceDisabled = true;
-    private string _resetSearchCriteriaDropdown = "<option value=\"none\" selected>Please select</option>"; // this needs fixing with a better solution
     private string _loadingUserdataMessage = "Loading...";
     private readonly string _selectOtherDataSourceOnErrorMessage = "Please select an alternative data source from the drop-down in the top right-hand corner.";
 
@@ -210,8 +221,6 @@ public partial class Users
 
     private void ChangeSortDirection() => _sortOrder = _sortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
 
-    
-
     private void SortUsers(SortByAttribute sortBy, bool changeSortDirection)
     {
         _sortBy = sortBy;
@@ -224,25 +233,14 @@ public partial class Users
         _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, sortBy);
     }
 
-    private void SearchCriteriaIsChanged(ChangeEventArgs args)
+    private void SearchCriteriaIsChanged (SearchCriteria selectedItem)
     {
+        Debug.WriteLine(_searchCriteria);
+        SearchCriteria = selectedItem; //set search criteria to selected item
         _searchTerm = string.Empty; //clear search input box
 
-        _searchCriteria = args.Value?.ToString() switch
-        {
-            "none" => SearchCriteria.None,
-            "userId" => SearchCriteria.UserId,
-            "firstName" => SearchCriteria.FirstName,
-            "lastName" => SearchCriteria.LastName,
-            "email" => SearchCriteria.Email,
-            "company" => SearchCriteria.Company,
-            _ => SearchCriteria.None
-        };
-
-        if (_searchCriteria == SearchCriteria.None)
-            _searchDisabled = true;
-        else
-            _searchDisabled = false;
+        //check if searchable criteria is selected, and enable/disable the search button accordingly
+        _searchDisabled = _searchCriteria == SearchCriteria.None ? _searchDisabled = true : _searchDisabled = false;
     }
 
     private void SearchUsers()
@@ -255,16 +253,12 @@ public partial class Users
     {
         //clear search input box
         _searchTerm = string.Empty;
+
         //set search criteria to none
-        _searchCriteria = SearchCriteria.None; //This does not reset the drop-down for search criteria though.
+        SearchCriteria = SearchCriteria.None;
+        
         //disable search button
         _searchDisabled = true;
-
-        //reset drop-down for search criteria to "please select"
-        //could not find a way to change the drop-down selection from C#, so adding/removing a space in the label for the drop-down option as below.
-        _resetSearchCriteriaDropdown = _resetSearchCriteriaDropdown == "<option value=\"none\" selected>Please select </option>"
-            ? "<option value=\"none\" selected>Please select</option>"
-            : "<option value=\"none\" selected>Please select </option>";
     }
 
     private void ErrorHandling(Exception e)

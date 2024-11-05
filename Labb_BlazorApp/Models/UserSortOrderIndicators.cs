@@ -1,4 +1,5 @@
 ﻿using Labb_BlazorApp.Components.Pages;
+using Labb_BlazorApp.Services;
 
 namespace Labb_BlazorApp.Models;
 

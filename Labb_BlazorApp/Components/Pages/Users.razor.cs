@@ -14,6 +14,7 @@ using CsvHelper;
 using System;
 using System.ComponentModel;
 using Microsoft.Extensions.Primitives;
+using System.Xml.Linq;
 
 namespace Labb_BlazorApp.Components.Pages;
 
@@ -25,30 +26,6 @@ public enum NumberOfItemsToDisplay
     Display25 = 25,
     Display50 = 50
 }
-public enum SortOrder
-{
-    Ascending,
-    Descending
-}
-
-public enum SortByAttribute
-{
-    UserId,
-    FirstName,
-    LastName,
-    Email,
-    Company
-}
-
-public enum SearchCriteria
-{
-    [Description("Please Select")] None,
-    [Description("User ID")] UserId,
-    [Description("First name")] FirstName,
-    [Description("Last name")] LastName,
-    Email,
-    [Description("Company name")] Company
-}
 
 public enum DataSource
 {
@@ -59,27 +36,17 @@ public enum DataSource
 
 public partial class Users
 {
-    private List<User>? _users;
-    public List<User>? UsersToDisplay { get; set; }
+    private List<User>? _users; //original list of users fetched from data source
+    public List<User>? UsersToDisplay { get; set; } //list of users being manipulated and displayed
+    private UserSortOrderIndicators _sortOrderIndicator = new UserSortOrderIndicators();
+    public UserDataProcessing DataProcessing = new UserDataProcessing();
+
+
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
     public NumberOfItemsToDisplay NumberOfItemsToDisplay { get => _numberOfItemsToDisplay; set => _numberOfItemsToDisplay = value; }
     public List<NumberOfItemsToDisplay> NumberOfItemsToDisplayList = [NumberOfItemsToDisplay.Display05, NumberOfItemsToDisplay.Display10, NumberOfItemsToDisplay.Display25, NumberOfItemsToDisplay.Display50, NumberOfItemsToDisplay.DisplayAll];
+    
 
-    private SortOrder _sortOrder = SortOrder.Ascending;
-    private SortByAttribute _sortBy = SortByAttribute.FirstName;
-    private UserSortOrderIndicators _sortOrderIndicator = new UserSortOrderIndicators();
-    
-    private SearchCriteria _searchCriteria = SearchCriteria.None;
-    public SearchCriteria SearchCriteria
-    {
-        get => _searchCriteria;
-        set => _searchCriteria = value;
-    }
-    public List<SearchCriteria> SearchCriteriaList = [ SearchCriteria.None, SearchCriteria.UserId, SearchCriteria.FirstName, SearchCriteria.LastName,
-        SearchCriteria.Email, SearchCriteria.Company ];
-    private bool _searchDisabled = true;
-    private string _searchTerm = string.Empty;
-    
     private DataSource _dataSource;
     public DataSource DataSource { get => _dataSource; set => _dataSource = value; }
     public List<DataSource> DataSourceList = [ DataSource.Api, DataSource.Memory, DataSource.Csv ];
@@ -100,7 +67,7 @@ public partial class Users
                 var userService = UserServiceProvider.GetUserService(DataSource);
                 _users = userService.GetUsers().ToList();
                 SetUsersToDisplay();
-                _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, _sortBy);
+                _sortOrderIndicator.SetSortOrderIndicator(DataProcessing.SortOrder, DataProcessing.SortBy);
                 _dataSourceDisabled = false;
 
                 StateHasChanged();
@@ -134,29 +101,14 @@ public partial class Users
 
     private void SetUsersToDisplay()
     {
-        _sortBy = SortByAttribute.FirstName;
-        _sortOrder = SortOrder.Ascending;
+        DataProcessing.SortBy = SortByAttribute.FirstName;
+        DataProcessing.SortOrder = SortOrder.Ascending;
 
         //if "number of items to display" is greater than the count of users, then set "number of items to display" to all.
         if (_users.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
             _numberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
 
         UsersToDisplay = _users?.OrderBy(user => user.FirstName).Take((int)_numberOfItemsToDisplay).ToList();
-    }
-
-    private void FilterUsers(NumberOfItemsToDisplay numberOfItemsToDisplay)
-    {
-        NumberOfItemsToDisplay = numberOfItemsToDisplay;
-        //reset UsersToDisplay to whole list of all users, ensuring that option to increase number of items to display works.
-        UsersToDisplay = _users?.ToList(); 
-
-        //if "number of items to display" is greater than the count of users, then set "number of items to display" to all.
-        if (UsersToDisplay.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
-            _numberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
-
-        SortUsers(_sortBy, false); //maintain sort order
-        UserDataProcessing DataProcessing = new UserDataProcessing();
-        UsersToDisplay = DataProcessing.Filter(UsersToDisplay!, _numberOfItemsToDisplay).ToList();
     }
 
     private void DataSourceIsChanged(DataSource selectedItem)
@@ -170,8 +122,8 @@ public partial class Users
             var userService = UserServiceProvider.GetUserService(selectedItem);
             _users = userService.GetUsers().ToList();
             SetUsersToDisplay();
-            _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, _sortBy);
-            ResetSearchOptions();
+            _sortOrderIndicator.SetSortOrderIndicator(DataProcessing.SortOrder, DataProcessing.SortBy);
+            DataProcessing.ResetSearchOptions();
         }
         catch (ArgumentNullException e) //can be thrown by the JsonSerializer.Deserialize method
         {
@@ -219,45 +171,41 @@ public partial class Users
         }
     }
 
-    private void ChangeSortDirection() => _sortOrder = _sortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+    private void AllowDataSourceSelectionOnError()
+    {
+        _dataSourceDisabled = false;
+        StateHasChanged();
+    }
+
+    private void FilterUsers(NumberOfItemsToDisplay numberOfItemsToDisplay)
+    {
+        NumberOfItemsToDisplay = numberOfItemsToDisplay;
+
+        //reset UsersToDisplay to whole list of all users, ensuring that option to increase number of items to display works.
+        UsersToDisplay = _users?.ToList();
+
+        //if "number of items to display" is greater than the count of users, then set "number of items to display" to all.
+        if (UsersToDisplay.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))
+            _numberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
+
+        SortUsers(DataProcessing.SortBy, false); //maintain sort order
+        UsersToDisplay = DataProcessing.Filter(UsersToDisplay!, _numberOfItemsToDisplay).ToList();
+    }
 
     private void SortUsers(SortByAttribute sortBy, bool changeSortDirection)
     {
-        _sortBy = sortBy;
+        DataProcessing.SortBy = sortBy;
 
         if (changeSortDirection)
-            ChangeSortDirection();
+            DataProcessing.ChangeSortDirection();
 
-        UserDataProcessing DataProcessing = new UserDataProcessing();
-        UsersToDisplay = DataProcessing.Sort(UsersToDisplay!, _sortBy, _sortOrder).ToList();
-        _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, sortBy);
-    }
-
-    private void SearchCriteriaIsChanged (SearchCriteria selectedItem)
-    {
-        SearchCriteria = selectedItem; //set search criteria to selected item
-        _searchTerm = string.Empty; //clear search input box
-
-        //check if searchable criteria is selected, and enable/disable the search button accordingly
-        _searchDisabled = _searchCriteria == SearchCriteria.None ? _searchDisabled = true : _searchDisabled = false;
+        UsersToDisplay = DataProcessing.Sort(UsersToDisplay!).ToList();
+        _sortOrderIndicator.SetSortOrderIndicator(DataProcessing.SortOrder, DataProcessing.SortBy);
     }
 
     private void SearchUsers()
     {
-        UserDataProcessing DataProcessing = new UserDataProcessing();
-        UsersToDisplay = DataProcessing.Search(UsersToDisplay!, _searchCriteria, _searchTerm).ToList();
-    }
-
-    private void ResetSearchOptions()
-    {
-        //clear search input box
-        _searchTerm = string.Empty;
-
-        //set search criteria to none
-        SearchCriteria = SearchCriteria.None;
-        
-        //disable search button
-        _searchDisabled = true;
+        UsersToDisplay = DataProcessing.Search(UsersToDisplay!).ToList();
     }
 
     private void ErrorHandling(Exception e)
@@ -272,11 +220,5 @@ public partial class Users
         //ideally log the exception, e.Message
         _loadingUserdataMessage = $"An error has occured: {userFriendlyErrorMessage}";
         AllowDataSourceSelectionOnError();
-    }
-
-    private void AllowDataSourceSelectionOnError()
-    {
-        _dataSourceDisabled = false;
-        StateHasChanged();
     }
 }

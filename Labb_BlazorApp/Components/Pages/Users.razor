@@ -2,7 +2,8 @@
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @using System.ComponentModel.DataAnnotations;
-@using Labb_BlazorApp.Extensions
+@using Labb_BlazorApp.Extensions;
+@using Labb_BlazorApp.Services;
 
 <PageTitle>Users</PageTitle>
 
@@ -56,8 +57,8 @@ else
                 <div class="col-3">
                     <div class="input-group input-group-sm">
                         <label class="input-group-text" for="inputGroupSelect01">Search criteria: </label>
-                        <select class="form-select" id="inputGroupSelect01" @bind:get="SearchCriteria" @bind:set="SearchCriteriaIsChanged">
-                            @foreach (var item in SearchCriteriaList)
+                        <select class="form-select" id="inputGroupSelect01" @bind:get="DataProcessing.SearchCriteria" @bind:set="DataProcessing.SearchCriteriaIsChanged">
+                            @foreach (var item in DataProcessing.SearchCriteriaList)
                             {
                                 <option value="@item">@item.StringValueOf()</option>
                             }
@@ -66,8 +67,8 @@ else
                 </div>
                 <div class="col-3">
                     <div class="input-group input-group-sm">
-                        <input class="form-control" type="text" placeholder="search term" aria-label="search term" aria-describedby="button-addon2" id="search-term" @bind=_searchTerm>
-                        <button type="button" id="button-addon2" class="btn btn-outline-secondary" disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
+                        <input class="form-control" type="text" placeholder="search term" aria-label="search term" aria-describedby="button-addon2" id="search-term" @bind=DataProcessing.SearchTerm>
+                        <button type="button" id="button-addon2" class="btn btn-outline-secondary" disabled=@DataProcessing.SearchDisabled @onclick=SearchUsers>Search</button>
                     </div>
                 </div>
                 <div class="col-2"></div>

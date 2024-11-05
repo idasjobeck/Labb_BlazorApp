@@ -13,14 +13,8 @@
         </div>
         <div class="col-2">
             <div class="input-group-sm mb-5">
-                <label for="dataSource">Showing data from:</label>
-                @*                 <select name="dataSource" id="dataSource" class="form-select" disabled=@_dataSourceDisabled @onchange="DataSourceIsChanged">
-                    <option value="api" selected>API</option>
-                    <option value="memory">Memory</option>
-                    <option value="csv">CSV</option>
-                </select> *@
-                <select name="dataSource" id="dataSource" class="form-select" disabled=@_dataSourceDisabled @bind:get="DataSource" @bind:set="DataSourceIsChanged">
-                    @* @onchange="DataSourceIsChanged"> *@
+                <label class="col-form-label col-form-label-sm" for="dataSource">Showing data from:</label>
+                <select name="dataSource" id="dataSource" class="form-select form-select-sm" disabled=@_dataSourceDisabled @bind:get="DataSource" @bind:set="DataSourceIsChanged">
                     @foreach (var item in DataSourceList)
                     {
                         <option value="@item">@item.StringValueOf()</option>
@@ -58,9 +52,9 @@ else
     {
 
         <div class="container-fluid">
-            <div class="row justify-content-between">
+            <div class="row justify-content-between gx-0">
                 <div class="col-3">
-                    <div class="input-group input-group-sm mb-3">
+                    <div class="input-group input-group-sm">
                         <label class="input-group-text" for="inputGroupSelect01">Search criteria: </label>
                         <select class="form-select" id="inputGroupSelect01" @bind:get="SearchCriteria" @bind:set="SearchCriteriaIsChanged">
                             @foreach (var item in SearchCriteriaList)
@@ -71,25 +65,37 @@ else
                     </div>
                 </div>
                 <div class="col-3">
-                    <div class="input-group input-group-sm mb-3">
+                    <div class="input-group input-group-sm">
                         <input class="form-control" type="text" placeholder="search term" aria-label="search term" aria-describedby="button-addon2" id="search-term" @bind=_searchTerm>
                         <button type="button" id="button-addon2" class="btn btn-outline-secondary" disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
                     </div>
                 </div>
-                <div class="col-1 mb-3"></div>
-                <div class="col-5 mb-3">
-                    <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
-                    <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display50))">Show 50</button>
-                    <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display25))">Show 25</button>
-                    <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display10))">Show 10</button>
-                    <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display05))">Show 5</button>
+                <div class="col-2"></div>
+                <div class="col-2"></div>
+                <div class="col-auto text-end">
+                    <div class="input-group input-group-sm mb-3">
+                        <label class="col-form-label col-form-label-sm button-margin" for="itemsToDisplay">Show: </label>
+                        <select name="itemsToDisplay" id="itemsToDisplay" class="form-select" @bind:get="NumberOfItemsToDisplay" @bind:set="FilterUsers">
+                            @foreach (var item in NumberOfItemsToDisplayList)
+                            {
+                                if (item == NumberOfItemsToDisplay.DisplayAll)
+                                {
+                                    <option value="@item">@item.StringValueOf()</option>
+                                }
+                                else if (!_users.IsNumberToDisplayGreaterThanUsersAvailable((int)item))
+                                {
+                                    <option value="@item">@((int)item)</option>
+                                }
+                            }
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
 
 
         <p></p>
-        <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
+        <p class="right-aligned col-form-label-sm">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
 
         <table class="table">
             <thead>
@@ -128,6 +134,6 @@ else
         </table>
 
         <p></p>
-        <p class="right-aligned">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
+        <p class="right-aligned col-form-label-sm">Showing @UsersToDisplay?.Count of @_users.Count users.</p>
     }
 }

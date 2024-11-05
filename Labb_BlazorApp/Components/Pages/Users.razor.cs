@@ -19,7 +19,7 @@ namespace Labb_BlazorApp.Components.Pages;
 
 public enum NumberOfItemsToDisplay
 {
-    DisplayAll = 0,
+    [Description("All")] DisplayAll = 0,
     Display05 = 5,
     Display10 = 10,
     Display25 = 25,
@@ -62,9 +62,13 @@ public partial class Users
     private List<User>? _users;
     public List<User>? UsersToDisplay { get; set; }
     private NumberOfItemsToDisplay _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
+    public NumberOfItemsToDisplay NumberOfItemsToDisplay { get => _numberOfItemsToDisplay; set => _numberOfItemsToDisplay = value; }
+    public List<NumberOfItemsToDisplay> NumberOfItemsToDisplayList = [NumberOfItemsToDisplay.Display05, NumberOfItemsToDisplay.Display10, NumberOfItemsToDisplay.Display25, NumberOfItemsToDisplay.Display50, NumberOfItemsToDisplay.DisplayAll];
+
     private SortOrder _sortOrder = SortOrder.Ascending;
     private SortByAttribute _sortBy = SortByAttribute.FirstName;
     private UserSortOrderIndicators _sortOrderIndicator = new UserSortOrderIndicators();
+    
     private SearchCriteria _searchCriteria = SearchCriteria.None;
     public SearchCriteria SearchCriteria
     {
@@ -75,10 +79,12 @@ public partial class Users
         SearchCriteria.Email, SearchCriteria.Company ];
     private bool _searchDisabled = true;
     private string _searchTerm = string.Empty;
+    
     private DataSource _dataSource;
     public DataSource DataSource { get => _dataSource; set => _dataSource = value; }
     public List<DataSource> DataSourceList = [ DataSource.Api, DataSource.Memory, DataSource.Csv ];
     private bool _dataSourceDisabled = true;
+
     private string _loadingUserdataMessage = "Loading...";
     private readonly string _selectOtherDataSourceOnErrorMessage = "Please select an alternative data source from the drop-down in the top right-hand corner.";
 
@@ -116,6 +122,10 @@ public partial class Users
         {
             ErrorHandling(e, "The provided request URI is not valid relative or absolute URI.");
         }
+        catch (AggregateException e)
+        {
+            ErrorHandling(e); //error messages vary, so not providing a "user friendly" error message for this exception.
+        }
         catch (Exception e)
         {
             ErrorHandling(e, "Unknown error.");
@@ -136,7 +146,8 @@ public partial class Users
 
     private void FilterUsers(NumberOfItemsToDisplay numberOfItemsToDisplay)
     {
-        _numberOfItemsToDisplay = numberOfItemsToDisplay;
+        //_numberOfItemsToDisplay = numberOfItemsToDisplay;
+        NumberOfItemsToDisplay = numberOfItemsToDisplay;
         UsersToDisplay = _users?.ToList(); //reset UsersToDisplay to whole list of all users, ensuring that option to increase number of items to display works.
 
         //if "number of items to display" is greater than the count of users, then set "number of items to display" to all.
@@ -148,7 +159,6 @@ public partial class Users
         UsersToDisplay = DataProcessing.Filter(UsersToDisplay!, _numberOfItemsToDisplay).ToList();
     }
 
-    //private async Task DataSourceIsChanged(ChangeEventArgs args)
     private void DataSourceIsChanged(DataSource selectedItem)
     {
         try
@@ -198,6 +208,10 @@ public partial class Users
         catch (HeaderValidationException e) //can be thrown by the CsvHelper.CsvReader.GetRecords<T> method
         {
             ErrorHandling(e);
+        }
+        catch (AggregateException e)
+        {
+            ErrorHandling(e); //error messages vary, so not providing a "user friendly" error message for this exception.
         }
         catch (Exception e)
         {

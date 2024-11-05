@@ -69,8 +69,8 @@ else
                         <button type="button" id="button-addon2" class="btn btn-outline-secondary" disabled=@_searchDisabled @onclick=SearchUsers>Search</button>
                     </div>
                 </div>
-                <div class="col-2 mb-3"></div>
-                <div class="col-4 mb-3">
+                <div class="col-1 mb-3"></div>
+                <div class="col-5 mb-3">
                     <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.DisplayAll))">Show all</button>
                     <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display50))">Show 50</button>
                     <button class="float-end button-margin button-padding btn btn-outline-secondary btn-sm" @onclick="@(() => FilterUsers(NumberOfItemsToDisplay.Display25))">Show 25</button>

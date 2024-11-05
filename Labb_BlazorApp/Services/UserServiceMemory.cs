@@ -1,11 +1,8 @@
-﻿using System.Globalization;
-using System.Text.Json;
-using CsvHelper;
-using Labb_BlazorApp.Models;
+﻿using Labb_BlazorApp.Models;
 
 namespace Labb_BlazorApp.Services;
 
-public class UserService : IUserService
+public class UserServiceMemory : IUserService
 {
     public IEnumerable<User> GetUsers()
     {
@@ -24,42 +21,5 @@ public class UserService : IUserService
             new User(9, "Jeanne", "Mueller", "Jeanne.Mueller22@yahoo.com", "+1 (736) 489-1681", "https://astonishing-parchment.com/", "70933 Glenda Brooks", "South Gate", "6265", "Brakus Group", "If you don't have time to do it right, you definitely don't have time to do it over."),
             new User(10, "Beulah", "Spencer", "Beulah34@yahoo.com", "+1 (461) 852-2303", "https://frail-productivity.org", "23731 Hackett Parks", "Prudenceboro", "4294", "Schmitt, Ferry and Fadel", "Fail to plan, plan to fail.")
         };
-    }
-
-    public async Task<IEnumerable<User>> GetUsers(string url)
-    {
-        var jsonData = await GetDataFromApi(url);
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        var users = JsonSerializer.Deserialize<List<User>>(jsonData, options);
-
-        return users!;
-    }
-
-    public async Task<string> GetDataFromApi(string url)
-    {
-        using HttpClient client = new HttpClient();
-        Task<string> dataFetched = client.GetStringAsync(url);
-
-        var data = await dataFetched;
-
-        return data;
-    }
-
-    public IEnumerable<User> GetUsers(string filePath, char delimiter = ',')
-    {
-        using (var reader = new StreamReader(filePath))
-        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-        {
-            //var users = csv.GetRecords<User>().ToList();
-            //return users;
-            csv.Context.RegisterClassMap<UserMap>();
-            var users = csv.GetRecords<User>().ToList();
-            return users;
-        }
     }
 }

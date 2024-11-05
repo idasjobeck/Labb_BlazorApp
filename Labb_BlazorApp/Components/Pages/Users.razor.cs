@@ -84,10 +84,8 @@ public partial class Users
             {
                 await Task.Delay(3500); //set back to 3500 later
 
-                IUserService userService = new UserService();
-                var url = "https://jsonplaceholder.typicode.com/users";
-                var usersFromApi = await userService.GetUsers(url);
-                _users = usersFromApi.ToList();
+                IUserService userService = new UserServiceApi();
+                _users = userService.GetUsers().ToList();
                 SetUsersToDisplay();
                 _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, _sortBy);
                 _dataSourceDisabled = false;
@@ -149,25 +147,23 @@ public partial class Users
         {
             _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
             _loadingUserdataMessage = "Loading...";
-            IUserService userService = new UserService();
-            var url = "https://jsonplaceholder.typicode.com/users";
-            var filePath = "..\\Labb_BlazorApp\\wwwroot\\resources\\customers-100.csv"; //C:\Users\idasj\source\repos\ITHS\Programmering_C#\Labb_BlazorApp\Labb_BlazorApp\wwwroot\resources\customers-100.csv
-            var csvDelimiter = ',';
 
             switch (args.Value?.ToString()) //make own method in another class
             {
                 case "api":
                     //get users from API
-                    var usersFromApi = await userService.GetUsers(url);
-                    _users = usersFromApi.ToList();
+                    IUserService userServiceApi = new UserServiceApi();
+                    _users = userServiceApi.GetUsers().ToList();
                     break;
                 case "memory":
                     //get users from memory
-                    _users = userService.GetUsers().ToList();
+                    IUserService userServiceMemory = new UserServiceMemory();
+                    _users = userServiceMemory.GetUsers().ToList();
                     break;
                 case "csv":
                     //get users from csv file
-                    _users = userService.GetUsers(filePath, csvDelimiter).ToList();
+                    IUserService userServiceCsv = new UserServiceCsv();
+                    _users = userServiceCsv.GetUsers().ToList();
                     break;
                 default: //throw exception
                     break;

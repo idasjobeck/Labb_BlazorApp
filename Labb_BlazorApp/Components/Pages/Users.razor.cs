@@ -42,12 +42,19 @@ public enum SortByAttribute
 
 public enum SearchCriteria
 {
-    [Description("Please Select")]None,
-    [Description("User ID")]UserId,
-    [Description("First name")]FirstName,
-    [Description("Last name")]LastName,
+    [Description("Please Select")] None,
+    [Description("User ID")] UserId,
+    [Description("First name")] FirstName,
+    [Description("Last name")] LastName,
     Email,
-    [Description("Company name")]Company
+    [Description("Company name")] Company
+}
+
+public enum DataSource
+{
+    [Description("API")] Api,
+    Memory,
+    [Description("CSV")] Csv
 }
 
 public partial class Users
@@ -64,13 +71,13 @@ public partial class Users
         get => _searchCriteria;
         set => _searchCriteria = value;
     }
-    public List<SearchCriteria> SearchCriteriaList = new()
-    {
-        SearchCriteria.None, SearchCriteria.UserId, SearchCriteria.FirstName, SearchCriteria.LastName,
-        SearchCriteria.Email, SearchCriteria.Company
-    };
+    public List<SearchCriteria> SearchCriteriaList = [ SearchCriteria.None, SearchCriteria.UserId, SearchCriteria.FirstName, SearchCriteria.LastName,
+        SearchCriteria.Email, SearchCriteria.Company ];
     private bool _searchDisabled = true;
     private string _searchTerm = string.Empty;
+    private DataSource _dataSource;
+    public DataSource DataSource { get => _dataSource; set => _dataSource = value; }
+    public List<DataSource> DataSourceList = [ DataSource.Api, DataSource.Memory, DataSource.Csv ];
     private bool _dataSourceDisabled = true;
     private string _loadingUserdataMessage = "Loading...";
     private readonly string _selectOtherDataSourceOnErrorMessage = "Please select an alternative data source from the drop-down in the top right-hand corner.";
@@ -141,34 +148,17 @@ public partial class Users
         UsersToDisplay = DataProcessing.Filter(UsersToDisplay!, _numberOfItemsToDisplay).ToList();
     }
 
-    private async Task DataSourceIsChanged(ChangeEventArgs args)
+    //private async Task DataSourceIsChanged(ChangeEventArgs args)
+    private void DataSourceIsChanged(DataSource selectedItem)
     {
         try
         {
+            DataSource = selectedItem; //set data source to selected item
             _numberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
             _loadingUserdataMessage = "Loading...";
 
-            switch (args.Value?.ToString()) //make own method in another class
-            {
-                case "api":
-                    //get users from API
-                    IUserService userServiceApi = new UserServiceApi();
-                    _users = userServiceApi.GetUsers().ToList();
-                    break;
-                case "memory":
-                    //get users from memory
-                    IUserService userServiceMemory = new UserServiceMemory();
-                    _users = userServiceMemory.GetUsers().ToList();
-                    break;
-                case "csv":
-                    //get users from csv file
-                    IUserService userServiceCsv = new UserServiceCsv();
-                    _users = userServiceCsv.GetUsers().ToList();
-                    break;
-                default: //throw exception
-                    break;
-            }
-
+            var userService = UserServiceProvider.GetUserService(selectedItem);
+            _users = userService.GetUsers().ToList();
             SetUsersToDisplay();
             _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, _sortBy);
             ResetSearchOptions();
@@ -231,7 +221,6 @@ public partial class Users
 
     private void SearchCriteriaIsChanged (SearchCriteria selectedItem)
     {
-        Debug.WriteLine(_searchCriteria);
         SearchCriteria = selectedItem; //set search criteria to selected item
         _searchTerm = string.Empty; //clear search input box
 

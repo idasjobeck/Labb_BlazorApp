@@ -97,7 +97,7 @@ public partial class Users
             {
                 await Task.Delay(3500); //set back to 3500 later
 
-                IUserService userService = new UserServiceApi();
+                var userService = UserServiceProvider.GetUserService(DataSource);
                 _users = userService.GetUsers().ToList();
                 SetUsersToDisplay();
                 _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, _sortBy);
@@ -146,9 +146,9 @@ public partial class Users
 
     private void FilterUsers(NumberOfItemsToDisplay numberOfItemsToDisplay)
     {
-        //_numberOfItemsToDisplay = numberOfItemsToDisplay;
         NumberOfItemsToDisplay = numberOfItemsToDisplay;
-        UsersToDisplay = _users?.ToList(); //reset UsersToDisplay to whole list of all users, ensuring that option to increase number of items to display works.
+        //reset UsersToDisplay to whole list of all users, ensuring that option to increase number of items to display works.
+        UsersToDisplay = _users?.ToList(); 
 
         //if "number of items to display" is greater than the count of users, then set "number of items to display" to all.
         if (UsersToDisplay.IsNumberToDisplayGreaterThanUsersAvailable((int)_numberOfItemsToDisplay))

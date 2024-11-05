@@ -3,7 +3,7 @@ using Labb_BlazorApp.Models;
 
 namespace Labb_BlazorApp.Services;
 
-public class DataProcessing : IUserDataProcessing
+public class DataProcessing
 {
     public IEnumerable<User> Filter(IEnumerable<User> users, NumberOfItemsToDisplay numberOfItemsToDisplay)
     {

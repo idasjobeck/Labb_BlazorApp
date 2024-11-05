@@ -155,7 +155,7 @@ public partial class Users
             _numberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
 
         SortUsers(_sortBy, false); //maintain sort order
-        IUserDataProcessing DataProcessing = new DataProcessing();
+        UserDataProcessing DataProcessing = new UserDataProcessing();
         UsersToDisplay = DataProcessing.Filter(UsersToDisplay!, _numberOfItemsToDisplay).ToList();
     }
 
@@ -228,7 +228,7 @@ public partial class Users
         if (changeSortDirection)
             ChangeSortDirection();
 
-        IUserDataProcessing DataProcessing = new DataProcessing();
+        UserDataProcessing DataProcessing = new UserDataProcessing();
         UsersToDisplay = DataProcessing.Sort(UsersToDisplay!, _sortBy, _sortOrder).ToList();
         _sortOrderIndicator.SetSortOrderIndicator(_sortOrder, sortBy);
     }
@@ -244,7 +244,7 @@ public partial class Users
 
     private void SearchUsers()
     {
-        IUserDataProcessing DataProcessing = new DataProcessing();
+        UserDataProcessing DataProcessing = new UserDataProcessing();
         UsersToDisplay = DataProcessing.Search(UsersToDisplay!, _searchCriteria, _searchTerm).ToList();
     }
 

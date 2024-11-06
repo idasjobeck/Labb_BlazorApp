@@ -36,7 +36,7 @@ public class UserDataProcessing
     public SortOrder SortOrder { get; set; }
     public SortByAttribute SortBy { get; set; }
     public SearchCriteria SearchCriteria { get; set; }
-    //public SearchCriteria SearchCriteria { get => _searchCriteria; set => _searchCriteria = value; }
+
     public List<SearchCriteria> SearchCriteriaList { get; set; }
     public bool SearchDisabled { get; set; }
     public string SearchTerm { get; set; }
@@ -71,13 +71,13 @@ public class UserDataProcessing
             NumberOfItemsToDisplay.Display25 => users.Take((int)NumberOfItemsToDisplay.Display25),
             NumberOfItemsToDisplay.Display50 => users.Take((int)NumberOfItemsToDisplay.Display50),
             NumberOfItemsToDisplay.DisplayAll => users,
-            _ => throw new InvalidOperationException("Invalid number of users to display provided.") //users
+            _ => throw new InvalidOperationException("Invalid number of users to display provided.")
         };
 
         return users;
     }
 
-    public IEnumerable<User> Sort(IEnumerable<User> users)//, SortByAttribute sortBy, SortOrder sortOrder) <-- REMOVE COMMENT!!
+    public IEnumerable<User> Sort(IEnumerable<User> users)
     {
         users = SortBy switch
         {
@@ -94,7 +94,7 @@ public class UserDataProcessing
 
     public void ChangeSortDirection() => SortOrder = SortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
 
-    public IEnumerable<User> Search(IEnumerable<User> users) //, SearchCriteria searchCriteria, string searchTerm <-- REMOVE COMMENT!!
+    public IEnumerable<User> Search(IEnumerable<User> users)
     {
         users = SearchCriteria switch
         {
@@ -108,7 +108,7 @@ public class UserDataProcessing
                 users.Email.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
             Services.SearchCriteria.Company => users.Where(users =>
                 users.Company.CompanyName!.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
-            _ => throw new InvalidOperationException("Invalid search criteria provided.") //users
+            _ => throw new InvalidOperationException("Invalid search criteria provided.")
         };
 
         return users;

@@ -7,6 +7,6 @@ public static class UserExtensions
     public static bool IsNumberToDisplayGreaterThanUsersAvailable(this IEnumerable<User>? users,
         int numberOfItemsToDisplay)
     {
-        return numberOfItemsToDisplay > users?.Count();
+        return numberOfItemsToDisplay >= users?.Count();
     }
 }

@@ -9,7 +9,7 @@ public static class EnumUtils
     {
         //This extension is credited to https://waynehartman.com/posts/c-enums-and-string-values.html
 
-        FieldInfo fieldInfo = value.GetType().GetField(value.ToString());
+        FieldInfo fieldInfo = value.GetType().GetField(value.ToString())!;
         DescriptionAttribute[] attributes = (DescriptionAttribute[])fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
         if (attributes.Length > 0)
             return attributes[0].Description;

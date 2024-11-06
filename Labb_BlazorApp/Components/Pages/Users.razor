@@ -103,16 +103,16 @@ else
         <table class="table">
             <thead>
                 <tr>
-                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID @((MarkupString)_sortOrderIndicator.SortOrderIndicatorUserId)</th>
-                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.FirstName, true))">First name @((MarkupString)_sortOrderIndicator.SortOrderIndicatorFirstName)</th>
-                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.LastName, true))">Last name @((MarkupString)_sortOrderIndicator.SortOrderIndicatorLastName)</th>
-                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Email, true))">Email address @((MarkupString)_sortOrderIndicator.SortOrderIndicatorEmail)</th>
+                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.UserId, true))">User ID @((MarkupString)_sortOrderIndicator.SortOrderIndicatorUserId!)</th>
+                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.FirstName, true))">First name @((MarkupString)_sortOrderIndicator.SortOrderIndicatorFirstName!)</th>
+                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.LastName, true))">Last name @((MarkupString)_sortOrderIndicator.SortOrderIndicatorLastName!)</th>
+                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Email, true))">Email address @((MarkupString)_sortOrderIndicator.SortOrderIndicatorEmail!)</th>
                     <th>Phone number</th>
                     <th>Website</th>
                     <th>Street</th>
                     <th>City</th>
                     <th>Zip Code</th>
-                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Company, true))">Company name @((MarkupString)_sortOrderIndicator.SortOrderIndicatorCompanyName)</th>
+                    <th class="sortable" @onclick="@(() => SortUsers(SortByAttribute.Company, true))">Company name @((MarkupString)_sortOrderIndicator.SortOrderIndicatorCompanyName!)</th>
                     <th>Catchphrase</th>
                 </tr>
             </thead>

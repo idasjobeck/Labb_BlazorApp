@@ -124,7 +124,7 @@ public partial class Users
         //ideally log the exception, e.Message and StackTrace
         DisplayProperties.DisplayLoadingMessage = false;
         DisplayProperties.DisplayErrorMessage = true;
-        DisplayProperties.ExceptionMessage = e.GetType() == typeof(AggregateException) ? e.InnerException.Message : e.Message;
+        DisplayProperties.ExceptionMessage = e.GetType() == typeof(AggregateException) ? e.InnerException!.Message : e.Message;
         AllowDataSourceSelectionOnError();
     }
 

@@ -5,11 +5,11 @@ namespace Labb_BlazorApp.Models;
 
 public class UserSortOrderIndicators
 {
-    public string SortOrderIndicatorUserId { get; set; }
-    public string SortOrderIndicatorFirstName { get; set; }
-    public string SortOrderIndicatorLastName { get; set; }
-    public string SortOrderIndicatorEmail { get; set; }
-    public string SortOrderIndicatorCompanyName { get; set; }
+    public string? SortOrderIndicatorUserId { get; set; }
+    public string? SortOrderIndicatorFirstName { get; set; }
+    public string? SortOrderIndicatorLastName { get; set; }
+    public string? SortOrderIndicatorEmail { get; set; }
+    public string? SortOrderIndicatorCompanyName { get; set; }
 
     private readonly string _sortOrderIndicatorNotSortedDblArrow = "<i class=\"fa-solid fa-sort\"></i>";
     private readonly string _sortOrderIndicatorAscendingAZ = "<i class=\"fa-solid fa-arrow-down-a-z\"></i>";

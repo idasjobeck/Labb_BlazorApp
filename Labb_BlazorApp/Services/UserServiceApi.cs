@@ -26,7 +26,7 @@ public class UserServiceApi :  IUserService
     public async Task<IEnumerable<User>> GetUsersAsync()
     {
         var jsonData = await GetDataFromApi(Url);
-        var users = await DeserializeJson(jsonData);
+        var users = DeserializeJson(jsonData);
 
         return users;
     }
@@ -41,13 +41,15 @@ public class UserServiceApi :  IUserService
         return data;
     }
 
-    public async Task<IEnumerable<User>> DeserializeJson(string jsonData)
+    public IEnumerable<User> DeserializeJson(string jsonData)
     {
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
 
-        return JsonSerializer.Deserialize<IEnumerable<User>>(jsonData, options)!;
+        var users = JsonSerializer.Deserialize<IEnumerable<User>>(jsonData, options)!;
+
+        return users;
     }
 }

@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using System.Reflection.Metadata.Ecma335
+@using Labb_BlazorApp.Models
 @using Microsoft.AspNetCore.HttpLogging
 
 <PageTitle>New User</PageTitle>
@@ -52,8 +53,8 @@
         <div class="container-fluid">
             <div class="col-3">
                 <div class="input-group-sm text-center">
-                    <button type="submit" class=" btn btn-outline-primary btn-sm button-margin">Submit</button>
-                    <button type="reset" class=" btn btn-outline-secondary btn-sm button-margin">Reset</button>
+                    <button type="submit" class="btn btn-outline-primary btn-sm button-margin">Submit</button>
+                    <button type="reset" class="btn btn-outline-secondary btn-sm button-margin" @onclick="Reset">Reset</button>
                 </div>
             </div>
         </div>
@@ -70,4 +71,13 @@ else
         <b>Company catchphrase:</b> @_user.Company.Catchphrase.OrIfEmpty(_defaultIfFieldNotCompleted)<br />
         <b>Address:</b> @_user.Address.Street.OrIfEmpty(_defaultIfFieldNotCompleted), @_user.Address.City.OrIfEmpty(_defaultIfFieldNotCompleted), @_user.Address.ZipCode.OrIfEmpty(_defaultIfFieldNotCompleted)<br />
     </p>
+}
+
+@code
+{
+    private void Reset()
+    {
+        //setting _user to new user to reset fields in the form as empty
+        _user = new User();
+    }
 }

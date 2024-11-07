@@ -53,4 +53,24 @@ public class DisplayOptions
         DisplayErrorMessage = displayErrorMessage;
         ExceptionMessage = string.Empty;
     }
+
+    public void ResetExceptionSettings()
+    {
+        DisplayLoadingMessage = true;
+        DisplayErrorMessage = false;
+        ExceptionMessage = string.Empty;
+    }
+
+    public void SetToDisplayException(string exceptionMessage)
+    {
+        DisplayLoadingMessage = false;
+        DisplayErrorMessage = true;
+        ExceptionMessage = exceptionMessage;
+    }
+
+    public void SetToDisplayException()
+    {
+        DisplayLoadingMessage = false;
+        DisplayErrorMessage = true;
+    }
 }

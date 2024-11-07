@@ -43,9 +43,13 @@ public partial class Users
                 StateHasChanged();
             }
         }
+        catch (AggregateException ae)
+        {
+            AggregateExceptionHandling(ae);
+        }
         catch (Exception e)
         {
-            ErrorHandling(e);
+            ExceptionHandling(e);
         }
     }
 
@@ -67,8 +71,7 @@ public partial class Users
         {
             DisplayOptions.DataSourceOptions.DataSource = selectedItem; //set data source to selected item
             DisplayOptions.NumberOfItemsToDisplay = NumberOfItemsToDisplay.Display05; //set number of users to display to 5
-            DisplayOptions.DisplayErrorMessage = false;
-            DisplayOptions.DisplayLoadingMessage = true;
+            DisplayOptions.ResetExceptionSettings(); //clear potential error messages and set loading message to display
 
             var userService = UserServiceProvider.GetUserService(selectedItem);
             _users = userService.GetUsers().ToList();
@@ -76,9 +79,13 @@ public partial class Users
             _sortOrderIndicator.SetSortOrderIndicator(DataProcessing.SortOrder, DataProcessing.SortBy);
             DataProcessing.ResetSearchOptions();
         }
+        catch (AggregateException ae)
+        {
+            AggregateExceptionHandling(ae);
+        }
         catch (Exception e)
         {
-            ErrorHandling(e);
+            ExceptionHandling(e);
         }
     }
 
@@ -119,21 +126,33 @@ public partial class Users
         UsersToDisplay = DataProcessing.Search(UsersToDisplay!).ToList();
     }
 
-    private void ErrorHandling(Exception e)
+    private void ExceptionHandling(Exception e, bool isAggregateException = false, bool hasUserFriendlyErrorMessage = false, string userFriendlyErrorMessage = "")
     {
         //ideally log the exception, e.Message and StackTrace
-        DisplayOptions.DisplayLoadingMessage = false;
-        DisplayOptions.DisplayErrorMessage = true;
-        DisplayOptions.ExceptionMessage = e.GetType() == typeof(AggregateException) ? e.InnerException!.Message : e.Message;
-        AllowDataSourceSelectionOnError();
+        //(can expand the method to take different actions, as needed, depending on type of error)
+        var exceptionMessage = hasUserFriendlyErrorMessage ? userFriendlyErrorMessage : e.Message;
+
+        if (isAggregateException)
+        {
+            DisplayOptions.ExceptionMessage += $" {exceptionMessage}";
+        }
+        else if (!isAggregateException)
+        {
+            DisplayOptions.SetToDisplayException(exceptionMessage);
+            AllowDataSourceSelectionOnError();
+        }
     }
 
-    private void ErrorHandling(Exception e, string userFriendlyErrorMessage)
+    private void AggregateExceptionHandling(AggregateException ae)
     {
-        //ideally log the exception, e.Message and StackTrace
-        DisplayOptions.DisplayLoadingMessage = false;
-        DisplayOptions.DisplayErrorMessage = true;
-        DisplayOptions.ExceptionMessage = userFriendlyErrorMessage;
+        //ideally log the exception, ae.InnerException.Message and StackTrace
+        DisplayOptions.ExceptionMessage = "One or more errors have occurred.";
+
+        foreach (var exception in ae.InnerExceptions)
+        {
+            ExceptionHandling(exception, true);
+        }
+        DisplayOptions.SetToDisplayException();
         AllowDataSourceSelectionOnError();
     }
 }

@@ -4,28 +4,21 @@ namespace Labb_BlazorApp.Components.Pages;
 
 public partial class NewUser
 {
-    public bool displayForm = true;
-    private User _user = new User();
+    public bool DisplayForm = true;
+    private User _user = new();
     private string _defaultIfFieldNotCompleted = "unknown";
     
     private void AddUserToDb()
     {
         //would have code to add user to database.
 
-        //for the time being it just hides the form by setting displayForm to false.
-        displayForm = false;
-    }
-}
-
-public static class StringExtensions
-{
-    public static string OrIfEmpty(this string? str, string defaultValue)
-    {
-        return !string.IsNullOrEmpty(str) ? str : defaultValue;
+        //for the time being it just hides the form by setting DisplayForm to false.
+        DisplayForm = false;
     }
 
-    public static string OrIfEmpty(this string? self, Func<string> defaultValue)
+    private void Reset()
     {
-        return !string.IsNullOrEmpty(self) ? self : defaultValue();
+        //setting _user to new user to reset fields in the form as empty
+        _user = new User();
     }
 }

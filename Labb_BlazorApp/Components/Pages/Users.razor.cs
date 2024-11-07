@@ -1,20 +1,6 @@
-﻿using Microsoft.AspNetCore.Routing;
-using System.Diagnostics;
-using System.IO;
-using System.Text.Json;
-using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Html;
-using static Labb_BlazorApp.Components.Pages.Users;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Labb_BlazorApp.Extensions;
+﻿using Labb_BlazorApp.Extensions;
 using Labb_BlazorApp.Models;
 using Labb_BlazorApp.Services;
-using CsvHelper;
-using System;
-using System.ComponentModel;
-using Microsoft.Extensions.Primitives;
-using System.Xml.Linq;
 
 namespace Labb_BlazorApp.Components.Pages;
 
@@ -22,9 +8,9 @@ public partial class Users
 {
     private List<User>? _users; //original list of users fetched from data source
     public List<User>? UsersToDisplay { get; set; } //list of users being manipulated and displayed
-    public DisplayOptions DisplayOptions = new DisplayOptions();
-    private UserSortOrderIndicators _sortOrderIndicator = new UserSortOrderIndicators();
-    public UserDataProcessing DataProcessing = new UserDataProcessing();
+    public DisplayOptions DisplayOptions = new();
+    private UserSortOrderIndicators _sortOrderIndicator = new();
+    public UserDataProcessing DataProcessing = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -126,7 +112,7 @@ public partial class Users
         UsersToDisplay = DataProcessing.Search(UsersToDisplay!).ToList();
     }
 
-    private void ExceptionHandling(Exception e, bool isAggregateException = false, bool hasUserFriendlyErrorMessage = false, string userFriendlyErrorMessage = "")
+    private void ExceptionHandling(Exception e, bool isAggregateException = false, bool hasUserFriendlyErrorMessage = false, string userFriendlyErrorMessage = "An error has occurred.")
     {
         //ideally log the exception, e.Message and StackTrace
         //(can expand the method to take different actions, as needed, depending on type of error)

@@ -1,8 +1,5 @@
-﻿using Labb_BlazorApp.Components.Pages;
-using Labb_BlazorApp.Models;
+﻿using Labb_BlazorApp.Models;
 using System.ComponentModel;
-using CsvHelper;
-using System.Xml;
 
 namespace Labb_BlazorApp.Services;
 
@@ -46,8 +43,7 @@ public class UserDataProcessing
         SortOrder = SortOrder.Ascending;
         SortBy = SortByAttribute.FirstName;
         SearchCriteria = SearchCriteria.None;
-        SearchCriteriaList = [ Services.SearchCriteria.None, Services.SearchCriteria.UserId, Services.SearchCriteria.FirstName, Services.SearchCriteria.LastName,
-            Services.SearchCriteria.Email, Services.SearchCriteria.Company ];
+        SearchCriteriaList = [ SearchCriteria.None, SearchCriteria.UserId, SearchCriteria.FirstName, SearchCriteria.LastName, SearchCriteria.Email, SearchCriteria.Company ];
         SearchDisabled = true;
         SearchTerm = string.Empty;
     }
@@ -56,8 +52,7 @@ public class UserDataProcessing
     {
         SortOrder = sortOrder;
         SortBy = sortBy;
-        SearchCriteriaList = [ Services.SearchCriteria.None, Services.SearchCriteria.UserId, Services.SearchCriteria.FirstName, Services.SearchCriteria.LastName,
-            Services.SearchCriteria.Email, Services.SearchCriteria.Company ];
+        SearchCriteriaList = [ SearchCriteria.None, SearchCriteria.UserId, SearchCriteria.FirstName, SearchCriteria.LastName, SearchCriteria.Email, SearchCriteria.Company ];
         SearchDisabled = true;
         SearchTerm = string.Empty;
     }
@@ -98,16 +93,11 @@ public class UserDataProcessing
     {
         users = SearchCriteria switch
         {
-            Services.SearchCriteria.UserId => users.Where(users =>
-                users.UserId.ToString().Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
-            Services.SearchCriteria.FirstName => users.Where(users =>
-                users.FirstName.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
-            Services.SearchCriteria.LastName => users.Where(users =>
-                users.LastName.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
-            Services.SearchCriteria.Email => users.Where(users =>
-                users.Email.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
-            Services.SearchCriteria.Company => users.Where(users =>
-                users.Company.CompanyName!.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
+            SearchCriteria.UserId => users.Where(users => users.UserId.ToString().Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
+            SearchCriteria.FirstName => users.Where(users => users.FirstName.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
+            SearchCriteria.LastName => users.Where(users => users.LastName.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
+            SearchCriteria.Email => users.Where(users => users.Email.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
+            SearchCriteria.Company => users.Where(users => users.Company.CompanyName!.Contains(SearchTerm, StringComparison.CurrentCultureIgnoreCase)),
             _ => throw new InvalidOperationException("Invalid search criteria provided.")
         };
 

@@ -1,15 +1,11 @@
 ﻿@page "/newuser"
 @rendermode InteractiveServer
-@using System.ComponentModel.DataAnnotations
-@using System.Reflection.Metadata.Ecma335
-@using Labb_BlazorApp.Models
-@using Microsoft.AspNetCore.HttpLogging
+@using Labb_BlazorApp.Extensions
 
 <PageTitle>New User</PageTitle>
 
-
 <h2>Register New User</h2>
-@if (displayForm)
+@if (DisplayForm)
 {
     <p><i>Fields noted with <span class="text-danger"><b>*</b></span> are mandatory fields.</i></p>
 
@@ -71,13 +67,4 @@ else
         <b>Company catchphrase:</b> @_user.Company.Catchphrase.OrIfEmpty(_defaultIfFieldNotCompleted)<br />
         <b>Address:</b> @_user.Address.Street.OrIfEmpty(_defaultIfFieldNotCompleted), @_user.Address.City.OrIfEmpty(_defaultIfFieldNotCompleted), @_user.Address.ZipCode.OrIfEmpty(_defaultIfFieldNotCompleted)<br />
     </p>
-}
-
-@code
-{
-    private void Reset()
-    {
-        //setting _user to new user to reset fields in the form as empty
-        _user = new User();
-    }
 }

@@ -11,7 +11,7 @@ public enum NumberOfItemsToDisplay
     Display50 = 50
 }
 
-public class DisplayProperties
+public class DisplayOptions
 {
     public NumberOfItemsToDisplay NumberOfItemsToDisplay { get; set; }
     public List<NumberOfItemsToDisplay> NumberOfItemsToDisplayList { get; set; }
@@ -21,7 +21,7 @@ public class DisplayProperties
     public bool DisplayErrorMessage { get; set; }
     public string ExceptionMessage { get; set; }
 
-    public DisplayProperties()
+    public DisplayOptions()
     {
         NumberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
         NumberOfItemsToDisplayList = [NumberOfItemsToDisplay.Display05, NumberOfItemsToDisplay.Display10, NumberOfItemsToDisplay.Display25, NumberOfItemsToDisplay.Display50, NumberOfItemsToDisplay.DisplayAll];
@@ -32,7 +32,7 @@ public class DisplayProperties
         ExceptionMessage = string.Empty;
     }
 
-    public DisplayProperties(NumberOfItemsToDisplay numberOfItemsToDisplay, List<NumberOfItemsToDisplay> numberOfItemsToDisplayList, bool displayLoadingMessage = true, bool displayErrorMessage = false)
+    public DisplayOptions(NumberOfItemsToDisplay numberOfItemsToDisplay, List<NumberOfItemsToDisplay> numberOfItemsToDisplayList, bool displayLoadingMessage = true, bool displayErrorMessage = false)
     {
         NumberOfItemsToDisplay = numberOfItemsToDisplay;
         NumberOfItemsToDisplayList = numberOfItemsToDisplayList;
@@ -43,7 +43,7 @@ public class DisplayProperties
         ExceptionMessage = string.Empty;
     }
 
-    public DisplayProperties(NumberOfItemsToDisplay numberOfItemsToDisplay, List<NumberOfItemsToDisplay> numberOfItemsToDisplayList, DataSource dataSource, List<DataSource> dataSourceList, bool dataSourceDisabled, string loading, string loadingError, string allowOtherDataSourceOnLoadingError, bool displayLoadingMessage = true, bool displayErrorMessage = false)
+    public DisplayOptions(NumberOfItemsToDisplay numberOfItemsToDisplay, List<NumberOfItemsToDisplay> numberOfItemsToDisplayList, DataSource dataSource, List<DataSource> dataSourceList, bool dataSourceDisabled, string loading, string loadingError, string allowOtherDataSourceOnLoadingError, bool displayLoadingMessage = true, bool displayErrorMessage = false)
     {
         NumberOfItemsToDisplay = numberOfItemsToDisplay;
         NumberOfItemsToDisplayList = numberOfItemsToDisplayList;

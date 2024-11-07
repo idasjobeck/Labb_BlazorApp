@@ -15,8 +15,8 @@
         <div class="col-2">
             <div class="input-group-sm mb-5">
                 <label class="col-form-label col-form-label-sm" for="dataSource">Showing data from:</label>
-                <select name="dataSource" id="dataSource" class="form-select form-select-sm" disabled=@DisplayProperties.DataSourceProperties.DataSourceDisabled @bind:get="DisplayProperties.DataSourceProperties.DataSource" @bind:set="DataSourceIsChanged">
-                    @foreach (var item in DisplayProperties.DataSourceProperties.DataSourceList)
+                <select name="dataSource" id="dataSource" class="form-select form-select-sm" disabled=@DisplayOptions.DataSourceProperties.DataSourceDisabled @bind:get="DisplayOptions.DataSourceProperties.DataSource" @bind:set="DataSourceIsChanged">
+                    @foreach (var item in DisplayOptions.DataSourceProperties.DataSourceList)
                     {
                         <option value="@item">@item.StringValueOf()</option>
                     }
@@ -29,27 +29,27 @@
 @if (_users == null)
 {
     <div class="text-center">
-        @if (DisplayProperties.DisplayLoadingMessage)
+        @if (DisplayOptions.DisplayLoadingMessage)
         {
-            <p>@DisplayProperties.Messages.Loading</p>
+            <p>@DisplayOptions.Messages.Loading</p>
             <img src="/resources/giphy_duck.gif" width="100" height="100" />
         }
-        else if (DisplayProperties.DisplayErrorMessage)
+        else if (DisplayOptions.DisplayErrorMessage)
         {
-            <p>@DisplayProperties.Messages.LoadingError</p>
-            <p>@DisplayProperties.ExceptionMessage</p>
-            <p>@DisplayProperties.Messages.AllowOtherDataSourceOnLoadingError</p>
+            <p>@DisplayOptions.Messages.LoadingError</p>
+            <p>@DisplayOptions.ExceptionMessage</p>
+            <p>@DisplayOptions.Messages.AllowOtherDataSourceOnLoadingError</p>
         }
     </div>
 }
 else
 {
-    @if (DisplayProperties.DisplayErrorMessage)
+    @if (DisplayOptions.DisplayErrorMessage)
     {
         <div class="text-center">
-            <p>@DisplayProperties.Messages.LoadingError</p>
-            <p>@DisplayProperties.ExceptionMessage</p>
-            <p>@DisplayProperties.Messages.AllowOtherDataSourceOnLoadingError</p>
+            <p>@DisplayOptions.Messages.LoadingError</p>
+            <p>@DisplayOptions.ExceptionMessage</p>
+            <p>@DisplayOptions.Messages.AllowOtherDataSourceOnLoadingError</p>
         </div>
     }
     else
@@ -78,8 +78,8 @@ else
                 <div class="col-auto text-end">
                     <div class="input-group input-group-sm mb-3">
                         <label class="col-form-label col-form-label-sm button-margin" for="itemsToDisplay">Show: </label>
-                        <select name="itemsToDisplay" id="itemsToDisplay" class="form-select" @bind:get="DisplayProperties.NumberOfItemsToDisplay" @bind:set="FilterUsers">
-                            @foreach (var item in DisplayProperties.NumberOfItemsToDisplayList)
+                        <select name="itemsToDisplay" id="itemsToDisplay" class="form-select" @bind:get="DisplayOptions.NumberOfItemsToDisplay" @bind:set="FilterUsers">
+                            @foreach (var item in DisplayOptions.NumberOfItemsToDisplayList)
                             {
                                 if (item == NumberOfItemsToDisplay.DisplayAll)
                                 {

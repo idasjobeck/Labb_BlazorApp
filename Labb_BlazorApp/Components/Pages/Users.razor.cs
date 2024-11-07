@@ -22,7 +22,7 @@ public partial class Users
 {
     private List<User>? _users; //original list of users fetched from data source
     public List<User>? UsersToDisplay { get; set; } //list of users being manipulated and displayed
-    public DisplayProperties DisplayProperties = new DisplayProperties();
+    public DisplayOptions DisplayOptions = new DisplayOptions();
     private UserSortOrderIndicators _sortOrderIndicator = new UserSortOrderIndicators();
     public UserDataProcessing DataProcessing = new UserDataProcessing();
 
@@ -34,11 +34,11 @@ public partial class Users
             {
                 await Task.Delay(2500);
 
-                var userService = UserServiceProvider.GetUserService(DisplayProperties.DataSourceProperties.DataSource);
+                var userService = UserServiceProvider.GetUserService(DisplayOptions.DataSourceProperties.DataSource);
                 _users = userService.GetUsers().ToList();
                 SetUsersToDisplay();
                 _sortOrderIndicator.SetSortOrderIndicator(DataProcessing.SortOrder, DataProcessing.SortBy);
-                DisplayProperties.DataSourceProperties.DataSourceDisabled = false;
+                DisplayOptions.DataSourceProperties.DataSourceDisabled = false;
 
                 StateHasChanged();
             }
@@ -55,20 +55,20 @@ public partial class Users
         DataProcessing.SortOrder = SortOrder.Ascending;
 
         //if "number of items to display" is greater than the count of users, then set "number of items to display" to all.
-        if (_users.IsNumberToDisplayGreaterThanUsersAvailable((int)DisplayProperties.NumberOfItemsToDisplay))
-            DisplayProperties.NumberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
+        if (_users.IsNumberToDisplayGreaterThanUsersAvailable((int)DisplayOptions.NumberOfItemsToDisplay))
+            DisplayOptions.NumberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
 
-        UsersToDisplay = _users?.OrderBy(user => user.FirstName).Take((int)DisplayProperties.NumberOfItemsToDisplay).ToList();
+        UsersToDisplay = _users?.OrderBy(user => user.FirstName).Take((int)DisplayOptions.NumberOfItemsToDisplay).ToList();
     }
 
     private void DataSourceIsChanged(DataSource selectedItem)
     {
         try
         {
-            DisplayProperties.DataSourceProperties.DataSource = selectedItem; //set data source to selected item
-            DisplayProperties.NumberOfItemsToDisplay = NumberOfItemsToDisplay.Display05; //set number of users to display to 5
-            DisplayProperties.DisplayErrorMessage = false;
-            DisplayProperties.DisplayLoadingMessage = true;
+            DisplayOptions.DataSourceProperties.DataSource = selectedItem; //set data source to selected item
+            DisplayOptions.NumberOfItemsToDisplay = NumberOfItemsToDisplay.Display05; //set number of users to display to 5
+            DisplayOptions.DisplayErrorMessage = false;
+            DisplayOptions.DisplayLoadingMessage = true;
 
             var userService = UserServiceProvider.GetUserService(selectedItem);
             _users = userService.GetUsers().ToList();
@@ -84,23 +84,23 @@ public partial class Users
 
     private void AllowDataSourceSelectionOnError()
     {
-        DisplayProperties.DataSourceProperties.DataSourceDisabled = false;
+        DisplayOptions.DataSourceProperties.DataSourceDisabled = false;
         StateHasChanged();
     }
 
     private void FilterUsers(NumberOfItemsToDisplay numberOfItemsToDisplay)
     {
-        DisplayProperties.NumberOfItemsToDisplay = numberOfItemsToDisplay;
+        DisplayOptions.NumberOfItemsToDisplay = numberOfItemsToDisplay;
 
         //reset UsersToDisplay to whole list of all users, ensuring that option to increase number of items to display works.
         UsersToDisplay = _users?.ToList();
 
         //if "number of items to display" is greater than the count of users, then set "number of items to display" to all.
-        if (UsersToDisplay.IsNumberToDisplayGreaterThanUsersAvailable((int)DisplayProperties.NumberOfItemsToDisplay))
-            DisplayProperties.NumberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
+        if (UsersToDisplay.IsNumberToDisplayGreaterThanUsersAvailable((int)DisplayOptions.NumberOfItemsToDisplay))
+            DisplayOptions.NumberOfItemsToDisplay = NumberOfItemsToDisplay.DisplayAll;
 
         SortUsers(DataProcessing.SortBy, false); //maintain sort order
-        UsersToDisplay = DataProcessing.Filter(UsersToDisplay!, DisplayProperties.NumberOfItemsToDisplay).ToList();
+        UsersToDisplay = DataProcessing.Filter(UsersToDisplay!, DisplayOptions.NumberOfItemsToDisplay).ToList();
     }
 
     private void SortUsers(SortByAttribute sortBy, bool changeSortDirection)
@@ -122,18 +122,18 @@ public partial class Users
     private void ErrorHandling(Exception e)
     {
         //ideally log the exception, e.Message and StackTrace
-        DisplayProperties.DisplayLoadingMessage = false;
-        DisplayProperties.DisplayErrorMessage = true;
-        DisplayProperties.ExceptionMessage = e.GetType() == typeof(AggregateException) ? e.InnerException!.Message : e.Message;
+        DisplayOptions.DisplayLoadingMessage = false;
+        DisplayOptions.DisplayErrorMessage = true;
+        DisplayOptions.ExceptionMessage = e.GetType() == typeof(AggregateException) ? e.InnerException!.Message : e.Message;
         AllowDataSourceSelectionOnError();
     }
 
     private void ErrorHandling(Exception e, string userFriendlyErrorMessage)
     {
         //ideally log the exception, e.Message and StackTrace
-        DisplayProperties.DisplayLoadingMessage = false;
-        DisplayProperties.DisplayErrorMessage = true;
-        DisplayProperties.ExceptionMessage = userFriendlyErrorMessage;
+        DisplayOptions.DisplayLoadingMessage = false;
+        DisplayOptions.DisplayErrorMessage = true;
+        DisplayOptions.ExceptionMessage = userFriendlyErrorMessage;
         AllowDataSourceSelectionOnError();
     }
 }

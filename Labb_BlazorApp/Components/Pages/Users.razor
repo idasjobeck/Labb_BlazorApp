@@ -15,8 +15,8 @@
         <div class="col-2">
             <div class="input-group-sm mb-5">
                 <label class="col-form-label col-form-label-sm" for="dataSource">Showing data from:</label>
-                <select name="dataSource" id="dataSource" class="form-select form-select-sm" disabled=@DisplayOptions.DataSourceProperties.DataSourceDisabled @bind:get="DisplayOptions.DataSourceProperties.DataSource" @bind:set="DataSourceIsChanged">
-                    @foreach (var item in DisplayOptions.DataSourceProperties.DataSourceList)
+                <select name="dataSource" id="dataSource" class="form-select form-select-sm" disabled=@DisplayOptions.DataSourceOptions.DataSourceDisabled @bind:get="DisplayOptions.DataSourceOptions.DataSource" @bind:set="DataSourceIsChanged">
+                    @foreach (var item in DisplayOptions.DataSourceOptions.DataSourceList)
                     {
                         <option value="@item">@item.StringValueOf()</option>
                     }

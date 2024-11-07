@@ -10,20 +10,20 @@ public enum DataSource
     [Description("CSV")] Csv
 }
 
-public class DataSourceProperties
+public class DataSourceOptions
 {
     public DataSource DataSource { get; set; }
     public List<DataSource> DataSourceList { get; set; }
     public bool DataSourceDisabled { get; set; }
 
-    public DataSourceProperties()
+    public DataSourceOptions()
     {
         DataSource = DataSource.Api;
         DataSourceList = [DataSource.Api, DataSource.Memory, DataSource.Csv];
         DataSourceDisabled = true;
     }
 
-    public DataSourceProperties(DataSource dataSource, List<DataSource> dataSourceList, bool dataSourceDisabled = true)
+    public DataSourceOptions(DataSource dataSource, List<DataSource> dataSourceList, bool dataSourceDisabled = true)
     {
         DataSource = dataSource;
         DataSourceList = dataSourceList;

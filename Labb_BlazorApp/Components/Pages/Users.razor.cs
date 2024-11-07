@@ -34,11 +34,11 @@ public partial class Users
             {
                 await Task.Delay(2500);
 
-                var userService = UserServiceProvider.GetUserService(DisplayOptions.DataSourceProperties.DataSource);
+                var userService = UserServiceProvider.GetUserService(DisplayOptions.DataSourceOptions.DataSource);
                 _users = userService.GetUsers().ToList();
                 SetUsersToDisplay();
                 _sortOrderIndicator.SetSortOrderIndicator(DataProcessing.SortOrder, DataProcessing.SortBy);
-                DisplayOptions.DataSourceProperties.DataSourceDisabled = false;
+                DisplayOptions.DataSourceOptions.DataSourceDisabled = false;
 
                 StateHasChanged();
             }
@@ -65,7 +65,7 @@ public partial class Users
     {
         try
         {
-            DisplayOptions.DataSourceProperties.DataSource = selectedItem; //set data source to selected item
+            DisplayOptions.DataSourceOptions.DataSource = selectedItem; //set data source to selected item
             DisplayOptions.NumberOfItemsToDisplay = NumberOfItemsToDisplay.Display05; //set number of users to display to 5
             DisplayOptions.DisplayErrorMessage = false;
             DisplayOptions.DisplayLoadingMessage = true;
@@ -84,7 +84,7 @@ public partial class Users
 
     private void AllowDataSourceSelectionOnError()
     {
-        DisplayOptions.DataSourceProperties.DataSourceDisabled = false;
+        DisplayOptions.DataSourceOptions.DataSourceDisabled = false;
         StateHasChanged();
     }
 

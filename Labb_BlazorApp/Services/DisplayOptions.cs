@@ -15,7 +15,7 @@ public class DisplayOptions
 {
     public NumberOfItemsToDisplay NumberOfItemsToDisplay { get; set; }
     public List<NumberOfItemsToDisplay> NumberOfItemsToDisplayList { get; set; }
-    public DataSourceProperties DataSourceProperties { get; set; }
+    public DataSourceOptions DataSourceOptions { get; set; }
     public Messages Messages { get; set; }
     public bool DisplayLoadingMessage { get; set; }
     public bool DisplayErrorMessage { get; set; }
@@ -25,7 +25,7 @@ public class DisplayOptions
     {
         NumberOfItemsToDisplay = NumberOfItemsToDisplay.Display05;
         NumberOfItemsToDisplayList = [NumberOfItemsToDisplay.Display05, NumberOfItemsToDisplay.Display10, NumberOfItemsToDisplay.Display25, NumberOfItemsToDisplay.Display50, NumberOfItemsToDisplay.DisplayAll];
-        DataSourceProperties = new DataSourceProperties();
+        DataSourceOptions = new DataSourceOptions();
         Messages = new Messages();
         DisplayLoadingMessage = true;
         DisplayErrorMessage = false;
@@ -36,7 +36,7 @@ public class DisplayOptions
     {
         NumberOfItemsToDisplay = numberOfItemsToDisplay;
         NumberOfItemsToDisplayList = numberOfItemsToDisplayList;
-        DataSourceProperties = new DataSourceProperties();
+        DataSourceOptions = new DataSourceOptions();
         Messages = new Messages();
         DisplayLoadingMessage = displayLoadingMessage;
         DisplayErrorMessage = displayErrorMessage;
@@ -47,7 +47,7 @@ public class DisplayOptions
     {
         NumberOfItemsToDisplay = numberOfItemsToDisplay;
         NumberOfItemsToDisplayList = numberOfItemsToDisplayList;
-        DataSourceProperties = new DataSourceProperties(dataSource, dataSourceList, dataSourceDisabled);
+        DataSourceOptions = new DataSourceOptions(dataSource, dataSourceList, dataSourceDisabled);
         Messages = new Messages(loading, loadingError, allowOtherDataSourceOnLoadingError);
         DisplayLoadingMessage = displayLoadingMessage;
         DisplayErrorMessage = displayErrorMessage;

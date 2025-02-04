@@ -1,4 +1,4 @@
-Min inlämningsuppgift för kursen "Programmering C#" (del av .NET-utvecklare YH-utbildningen på IT-Högskolan Stockholm).
+Min inlämningsuppgift för kursen "Programmering C#".
 
 # Blazor Labb
 * Uppgiften är att skriva en webbapp med Ramverket Blazor i .NET<br/>
